@@ -1,0 +1,21 @@
+# Java y Maven
+target/
+*.class
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+.metadata/
+.sonarlint/
+# Entorno y secretos: nunca entran al repositorio
+.env
+.env.*
+!.env.example
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
