@@ -1,0 +1,60 @@
+# Despliegue continuo (ADR-022, ADR-023): cada merge a main construye la imagen, la publica en GHCR
+# con la etiqueta del commit y la despliega en Azure Container Apps.
+# GitHub Actions entra a Azure por OIDC: no hay contraseñas de Azure guardadas (SPK-04, paso 9).
+name: CD
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["docs/**", "**/*.md"]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: despliegue-produccion
+  cancel-in-progress: false
+
+env:
+  IMAGEN: ghcr.io/${{ github.repository }}
+  GRUPO: rg-uco-kudos
+  APP: ucokudos-api
+
+jobs:
+  desplegar:
+    name: Construir, publicar y desplegar en Azure Container Apps
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Marcar el inicio
+        run: echo "INICIO=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Construir y publicar la imagen
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGEN }}:${{ github.sha }}
+          build-args: VERSION=${{ github.sha }}
+          # Una sola imagen, sin manifiestos de atestación, para que la plataforma la descargue sin rodeos.
+          provenance: false
+          sbom: false
+
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Desplegar la imagen nueva
+        run: bash .github/scripts/desplegar-imagen.sh "$GRUPO" "$APP" "$IMAGEN:$GITHUB_SHA"
+      - name: Comprobar que responde la versión nueva
+        run: bash .github/scripts/verificar-despliegue.sh "$GRUPO" "$APP" "$GITHUB_SHA" "$INICIO"
