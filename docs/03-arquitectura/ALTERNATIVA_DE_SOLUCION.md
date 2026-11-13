@@ -233,7 +233,7 @@ el despliegue, y conviene saberlo hoy.
 | Spike | Estado | Qué falta |
 |---|---|---|
 | `SPK-04` | Partes 1 y 2 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. La API de prueba responde desde el celular. De la parte 3, el paso 9: la identidad del pipeline y los secretos en los dos repositorios | Primer despliegue desde GitHub, vuelta atrás y las medidas con el back real |
-| `SPK-01` | Sin empezar; la guía paso a paso está en `spikes/SPK-01-whatsapp.md` | Todo. Es el más riesgoso, porque la plantilla `kudo_recibido` puede tardar en aprobarse |
+| `SPK-01` | Respondido: el `hello_world` llegó al celular desde la página y desde una llamada HTTP a la Cloud API de Meta (v25.0), con el número de prueba. La plantilla `kudo_recibido` está en revisión | La aprobación de la plantilla y el token permanente para producción |
 | `SPK-02`, `SPK-03`, `SPK-05`, `SPK-06` | Sin empezar | Se corren al construir cada adaptador |
 
 ---

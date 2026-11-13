@@ -2,7 +2,8 @@
 
 > **Borrador:** preparado con IA a partir de `ADR-020`. Los pasos son una guía; los resultados los llena el autor al correr el spike. Borra esta nota cuando el documento sea tuyo.
 
-> **Fecha:** 13-nov-2026 · **Límite de tiempo:** 1 h · **Estado:** ABIERTO
+> **Fecha:** 13-nov-2026 · **Límite de tiempo:** 1 h · **Estado:** RESPONDIDO el 13-nov-2026. Faltan
+> la aprobación de la plantilla y el token permanente
 > **Desbloquea:** `ADR-020`, `ABB-11`, `ESC-05`, `CN-14`, `CN-18`
 
 ## Pregunta
@@ -42,14 +43,39 @@ iniciar conversaciones con plantillas aprobadas, y la aprobación de una plantil
 5. Pulsar **«Enviar mensaje»** en esa misma página: envía la plantilla `hello_world`, que ya viene
    aprobada. Hacer la captura del mensaje recibido.
 6. Repetir el envío desde una terminal, con la llamada HTTP que muestra la página. Esto demuestra que
-   el envío sale desde código, como lo hará el adaptador de WhatsApp.
+   el envío sale desde código, como lo hará el adaptador de WhatsApp. Para que el token no quede en el
+   historial de la terminal, se lee sin mostrarlo (Cloud Shell o Git Bash). La versión de la Graph
+   API (`vNN.0`) se copia de la llamada de ejemplo de la página:
+
+   ```bash
+   read -s -p "Token temporal: " WA_TOKEN; echo
+   read -p "Identificador del número de teléfono: " WA_PHONE_ID
+   read -p "Celular destino con indicativo y sin + (57...): " WA_TO
+   read -p "Versión de la Graph API (ej. v23.0): " WA_VER
+   curl -s -X POST "https://graph.facebook.com/$WA_VER/$WA_PHONE_ID/messages" \
+     -H "Authorization: Bearer $WA_TOKEN" -H "Content-Type: application/json" \
+     -d "{\"messaging_product\":\"whatsapp\",\"to\":\"$WA_TO\",\"type\":\"template\",\"template\":{\"name\":\"hello_world\",\"language\":{\"code\":\"en_US\"}}}"
+   ```
+
+   Si sale bien, la respuesta trae `"message_status":"accepted"` y un identificador `wamid...`.
 
 ### Parte 3 · Plantilla del aviso de Kudo (≤ 15 min; la aprobación puede tardar)
 
-7. En el **Administrador de WhatsApp**, *Plantillas → Crear plantilla*: categoría **Utilidad**,
-   nombre `kudo_recibido`, idioma español, y un cuerpo con variables y ejemplos. Por ejemplo:
-   «Hola, {{1}}. {{2}} te reconoció en UCO Kudos con un Kudo de {{3}}. Entra a la aplicación para
-   verlo.» Enviarla a revisión.
+7. En el **Administrador de WhatsApp**, *Plantillas → Crear plantilla*, y enviarla a revisión con
+   estos datos:
+
+   | Campo | Valor |
+   |---|---|
+   | Categoría | **Utilidad**: avisa de algo que pasó en la cuenta del destinatario, no promociona nada |
+   | Nombre | `kudo_recibido` |
+   | Idioma | Español |
+   | Cuerpo | `Hola, {{1}}. {{2}} te reconoció en UCO Kudos con un Kudo de {{3}}. Entra a la aplicación para verlo.` |
+   | Ejemplos de las variables | `{{1}}` = Laura · `{{2}}` = Andrés Gómez · `{{3}}` = Trabajo en Equipo |
+   | Pie (opcional) | `UCO Kudos` |
+   | Botones | Ninguno por ahora; el de «Ver Kudo» necesita la URL final del front |
+
+   El cuerpo empieza y termina con texto fijo, y tiene más texto que variables: así lo exige Meta.
+   Si la reclasifica como *Marketing*, se acepta igual para la demo.
 8. Mientras se aprueba: si el destinatario le escribe primero al número de prueba, se abre la ventana
    de 24 horas y se pueden enviar mensajes de texto libre (`CN-18`).
 
@@ -73,12 +99,21 @@ iniciar conversaciones con plantillas aprobadas, y la aprobación de una plantil
 
 | Paso | Qué pasó | Evidencia |
 |---|---|---|
-| 1 a 4 · App, número de prueba y destinatarios verificados | | `docs/evidencias/notificaciones/spk-01-configuracion.png` (sin el token) |
-| 5 · `hello_world` desde la página | | `docs/evidencias/notificaciones/spk-01-hello-world.png` |
-| 6 · Envío desde una llamada HTTP | | `docs/evidencias/notificaciones/spk-01-http.png` (sin el token) |
-| 7 · Plantilla `kudo_recibido` | ¿Aprobada? ¿Cuánto tardó? | `docs/evidencias/notificaciones/spk-01-plantilla.png` |
+| 1 a 4 · App, número de prueba y destinatarios verificados | **Sí**, el 13-nov-2026. App `UCO Kudos` con el caso de uso de WhatsApp, conectada al portafolio comercial `UCO Kudos`, creado para esto y sin verificar (para el número de prueba no hace falta verificarlo). Meta asignó el número de prueba **+1 555 140 8598**. El celular del autor quedó verificado como destinatario. En la interfaz actual, la antigua «Configuración de la API» se llama *Configuración básica → Paso 1. Pruébalo* | `docs/evidencias/notificaciones/spk-01-configuracion.png` (sin el token) |
+| 5 · `hello_world` desde la página | **Sí**: llegó el 13-nov-2026 a las 3:12 p. m., desde el número de prueba, como cuenta de empresa | [`spk-01-hello-world.png`](../../evidencias/notificaciones/spk-01-hello-world.png) |
+| 6 · Envío desde una llamada HTTP | **Sí**, el 13-nov-2026: `POST` a la Graph API **v25.0** desde Git Bash, con el token leído sin mostrarlo. Respuesta: `"message_status":"accepted"` con su `wamid`, y el `hello_world` llegó al celular. Ojo: el curl de ejemplo de la página usa la sintaxis de PowerShell, y en Bash hay que reescribirlo | [`spk-01-http.png`](../../evidencias/notificaciones/spk-01-http.png) (con el número del destinatario tapado) |
+| 7 · Plantilla `kudo_recibido` | **En revisión** desde el 13-nov-2026 (tarde). Categoría Utilidad, idioma **Spanish (COL)**, que en la API es `es_CO`, y variables por número. Encabezado «¡Recibiste un Kudo!», el cuerpo de arriba y el pie «UCO Kudos». Los ejemplos solo le sirven a Meta para revisarla: la API manda los valores reales en `components → body → parameters`, en el orden `{{1}}` destinatario, `{{2}}` autor y `{{3}}` categoría. ¿Cuánto tardó la aprobación? … | `docs/evidencias/notificaciones/spk-01-plantilla.png` |
 | 9 · Token permanente | | — (es un secreto: no hay captura) |
 
-**Respuesta:** …
+**Respuesta (13-nov-2026):** **sí.** Un WhatsApp llega al celular verificado desde una llamada HTTP a
+la Cloud API de Meta, con el número de prueba. Se cumplió dentro del límite de 1 h, y ningún criterio
+de muerte se activó, así que el plan B (Twilio Sandbox) no hace falta.
+
 **Qué decide:** → `ADR-020`
-**Lo que queda abierto:** …
+
+**Lo que queda abierto:**
+1. **La aprobación de `kudo_recibido`.** Si la rechazan, se corrige y se reenvía. Mientras tanto se
+   usa la ventana de 24 horas.
+2. **La parte 4, el token permanente.** El temporal vence a las 24 h y no sirve para la demo. Se hace
+   antes del primer despliegue del back con el adaptador de WhatsApp.
+3. **La evidencia de la configuración** (`spk-01-configuracion.png`, sin el token ni el celular).
