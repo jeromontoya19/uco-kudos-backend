@@ -1,0 +1,93 @@
+# Integración continua (ADR-013, ADR-023).
+# - CI rápida: cada push a codigo-desarrollo. Compila y corre las pruebas unitarias y de arquitectura.
+# - CI completa: cada PR a codigo-testing o a main. Suma integración, cobertura, Sonar y Trivy.
+# Las acciones de terceros se fijan por SHA de commit (cadena de suministro).
+name: CI
+
+on:
+  push:
+    branches: [codigo-desarrollo]
+    paths-ignore: ["docs/**", "**/*.md"]
+  pull_request:
+    branches: [codigo-testing, main]
+    paths-ignore: ["docs/**", "**/*.md"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rapida:
+    name: CI rápida (compilar, unitarias y arquitectura)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Compilar y correr las pruebas unitarias y de arquitectura
+        run: sh mvnw -B -ntp test
+
+  completa:
+    name: CI completa (integración, cobertura, Sonar y Trivy)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Sonar necesita el historial completo para atribuir cada línea nueva.
+          fetch-depth: 0
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Pruebas unitarias, de arquitectura y de integración, con cobertura
+        run: sh mvnw -B -ntp verify
+
+      - name: Análisis de Sonar y su quality gate
+        if: env.SONAR_TOKEN != ''
+        run: sh mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.qualitygate.wait=true
+      - name: Aviso si falta Sonar
+        if: env.SONAR_TOKEN == ''
+        run: echo "::warning::Falta el secreto SONAR_TOKEN, así que el análisis de Sonar no corrió."
+
+      # Frena el cambio si hay una vulnerabilidad CRÍTICA o ALTA que ya tenga corrección.
+      - name: Trivy sobre las dependencias
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Construir la imagen
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          load: true
+          push: false
+          tags: uco-kudos-api:ci
+          build-args: VERSION=${{ github.sha }}
+      - name: Trivy sobre la imagen
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: uco-kudos-api:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
