@@ -19,3 +19,5 @@ target/
 Thumbs.db
 desktop.ini
 .DS_Store
+# Maven Wrapper (solo script: el jar no se versiona)
+.mvn/wrapper/maven-wrapper.jar
