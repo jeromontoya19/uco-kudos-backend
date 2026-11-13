@@ -26,6 +26,9 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>jeromontoya19</sonar.organization>
 		<sonar.projectKey>jeromontoya19_uco-kudos-backend</sonar.projectKey>
+		<!-- La clase de arranque solo llama a SpringApplication.run: probarla no aporta, y bajaría la
+		     cobertura del código nuevo que exige el quality gate. -->
+		<sonar.coverage.exclusions>**/UcoKudosApplication.java</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencies>
