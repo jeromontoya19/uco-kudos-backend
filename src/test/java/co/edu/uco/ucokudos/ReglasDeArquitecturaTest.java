@@ -27,7 +27,7 @@ class ReglasDeArquitecturaTest {
 
 	static final String RAIZ = "co.edu.uco.ucokudos";
 
-	private static final List<String> MODULOS = List.of("kudos", "avisos", "identidad", "auditoria", "moderacion");
+	static final List<String> MODULOS =List.of("kudos", "avisos", "identidad", "auditoria", "moderacion");
 
 	@ArchTest
 	static final ArchRule el_dominio_no_depende_de_frameworks = noClasses()
