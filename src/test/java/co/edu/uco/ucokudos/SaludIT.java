@@ -6,14 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 /**
  * Comprueba los dos endpoints que usan la plataforma y el monitor: la salud (ESC-07) y la versión
- * desplegada, que confirma la vuelta atrás (ESC-15).
+ * desplegada, que confirma la vuelta atrás (ESC-15). La salud incluye la conexión con la base.
  */
 @SpringBootTest(properties = "APP_VERSION=prueba")
 @AutoConfigureMockMvc
+@Import(BaseDeDatosDePrueba.class)
 class SaludIT {
 
 	@Autowired
