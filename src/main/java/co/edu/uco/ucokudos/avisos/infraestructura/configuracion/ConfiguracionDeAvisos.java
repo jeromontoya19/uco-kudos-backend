@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.List;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
@@ -41,8 +42,8 @@ class ConfiguracionDeAvisos {
 	private static final Duration TIEMPO_PARA_RESPONDER = Duration.ofSeconds(10);
 
 	@Bean
-	ProgramarAvisos programarAvisos(RepositorioDeAvisos avisos, Clock reloj) {
-		return new ProgramacionDeAvisos(avisos, reloj);
+	ProgramarAvisos programarAvisos(RepositorioDeAvisos avisos, Clock reloj, ApplicationEventPublisher eventos) {
+		return new ProgramarAvisosConDespachoInmediato(new ProgramacionDeAvisos(avisos, reloj), eventos);
 	}
 
 	@Bean
