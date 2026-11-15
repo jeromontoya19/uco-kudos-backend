@@ -1,0 +1,53 @@
+# Vuelta atrás (ESC-15, ADR-023): redespliega una imagen anterior por su etiqueta, sin reconstruirla,
+# y deja en el resumen cuánto tardó. Se lanza a mano desde la rama main, porque la identidad de
+# Azure solo confía en esa rama.
+name: Vuelta atrás
+
+on:
+  workflow_dispatch:
+    inputs:
+      etiqueta:
+        description: SHA completo del commit al que se vuelve (su imagen ya debe estar en GHCR)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: despliegue-produccion
+  cancel-in-progress: false
+
+env:
+  IMAGEN: ghcr.io/${{ github.repository }}
+  GRUPO: rg-uco-kudos
+  APP: ucokudos-api
+
+jobs:
+  volver:
+    name: Volver a una imagen anterior
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      ETIQUETA: ${{ inputs.etiqueta }}
+    steps:
+      - name: Validar la etiqueta y marcar el inicio
+        run: |
+          if [[ ! "$ETIQUETA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::La etiqueta debe ser el SHA completo de un commit (40 caracteres en minúscula)."
+            exit 1
+          fi
+          echo "INICIO=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Desplegar la imagen anterior
+        run: bash .github/scripts/desplegar-imagen.sh "$GRUPO" "$APP" "$IMAGEN:$ETIQUETA"
+      - name: Comprobar que responde la versión anterior
+        run: bash .github/scripts/verificar-despliegue.sh "$GRUPO" "$APP" "$ETIQUETA" "$INICIO"

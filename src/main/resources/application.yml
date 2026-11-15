@@ -1,0 +1,43 @@
+# Toda la configuración que cambia entre entornos llega por variables de entorno (ABB-17, CN-23).
+spring:
+  application:
+    name: uco-kudos-api
+  # PostgreSQL (ADR-017). Los valores no están en el repositorio: en Azure llegan como variables de
+  # Container Apps, y la contraseña, como su secreto. Si faltan, la API no arranca.
+  datasource:
+    url: ${BD_URL}
+    username: ${BD_USUARIO}
+    password: ${BD_CONTRASENA}
+    hikari:
+      data-source-properties:
+        # Conexión cifrada y con el certificado del servidor verificado contra las raíces de la JVM.
+        # Por eso BD_URL va sin «sslmode»: un parámetro en la URL tiene prioridad sobre estas líneas.
+        sslmode: verify-full
+        sslfactory: org.postgresql.ssl.DefaultJavaSSLFactory
+  flyway:
+    # Una migración mal nombrada detiene el arranque, en vez de quedar ignorada sin aviso.
+    validate-migration-naming: true
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      # Expone /actuator/health/liveness y /readiness para las sondas de la plataforma (ADR-022).
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+# La versión es la etiqueta de la imagen (el commit). Sirve para comprobar qué quedó desplegado y
+# cronometrar la vuelta atrás (ESC-15).
+info:
+  app:
+    version: ${APP_VERSION:local}
