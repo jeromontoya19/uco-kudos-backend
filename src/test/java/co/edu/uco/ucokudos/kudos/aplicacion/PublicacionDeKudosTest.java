@@ -7,12 +7,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import co.edu.uco.ucokudos.auditoria.aplicacion.puerto.entrada.HechoAuditable;
 import co.edu.uco.ucokudos.auditoria.aplicacion.puerto.entrada.Resultado;
 import co.edu.uco.ucokudos.avisos.aplicacion.puerto.entrada.KudoPorAvisar;
-import co.edu.uco.ucokudos.identidad.aplicacion.puerto.entrada.PersonaActiva;
 import co.edu.uco.ucokudos.kudos.aplicacion.puerto.entrada.KudoPublicado;
 import co.edu.uco.ucokudos.kudos.aplicacion.puerto.entrada.SolicitudDePublicacion;
 import co.edu.uco.ucokudos.kudos.dominio.Categoria;
@@ -50,20 +44,18 @@ class PublicacionDeKudosTest {
 
 	private final List<HechoAuditable> hechosAuditados = new ArrayList<>();
 
-	private final Set<UUID> personasActivas = new HashSet<>();
+	private final PersonasEnMemoria personas = new PersonasEnMemoria().con(DOCENTE, "Docente").con(ESTUDIANTE, "Estudiante");
 
-	private final Map<IdCategoria, Categoria> categorias = new HashMap<>();
+	private final CategoriasEnMemoria categorias = new CategoriasEnMemoria()
+		.con(new Categoria(EMPATIA, "Empatía", true))
+		.con(new Categoria(ARCHIVADA, "Archivada", false));
 
 	private PublicacionDeKudos publicacion;
 
 	@BeforeEach
 	void prepararDobles() {
-		personasActivas.addAll(Set.of(DOCENTE, ESTUDIANTE));
-		categorias.put(EMPATIA, new Categoria(EMPATIA, "Empatía", true));
-		categorias.put(ARCHIVADA, new Categoria(ARCHIVADA, "Archivada", false));
-		publicacion = new PublicacionDeKudos(kudosGuardados::add, id -> Optional.ofNullable(categorias.get(id)),
-				id -> personasActivas.contains(id) ? Optional.of(new PersonaActiva(id, "Persona")) : Optional.empty(),
-				avisosProgramados::add, hechosAuditados::add, Clock.fixed(AHORA, ZoneOffset.UTC));
+		publicacion = new PublicacionDeKudos(kudosGuardados::add, categorias, personas, avisosProgramados::add,
+				hechosAuditados::add, Clock.fixed(AHORA, ZoneOffset.UTC));
 	}
 
 	@Test
@@ -84,7 +76,7 @@ class PublicacionDeKudosTest {
 
 	@Test
 	void rechaza_si_el_destinatario_no_tiene_una_cuenta_activa() {
-		personasActivas.remove(ESTUDIANTE);
+		personas.desactivar(ESTUDIANTE);
 
 		assertRechazo(solicitud(DOCENTE, ESTUDIANTE, EMPATIA, "Gracias"),
 				PublicacionRechazada.Motivo.DESTINATARIO_NO_DISPONIBLE);
@@ -92,7 +84,7 @@ class PublicacionDeKudosTest {
 
 	@Test
 	void rechaza_si_el_autor_no_tiene_una_cuenta_activa() {
-		personasActivas.remove(DOCENTE);
+		personas.desactivar(DOCENTE);
 
 		assertRechazo(solicitud(DOCENTE, ESTUDIANTE, EMPATIA, "Gracias"), PublicacionRechazada.Motivo.AUTOR_NO_DISPONIBLE);
 	}

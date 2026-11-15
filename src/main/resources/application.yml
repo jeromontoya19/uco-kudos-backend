@@ -17,6 +17,40 @@ spring:
   flyway:
     # Una migración mal nombrada detiene el arranque, en vez de quedar ignorada sin aviso.
     validate-migration-naming: true
+  # Tokens OIDC del IdP (ADR-007, ADR-018). La API valida la firma, el emisor y la audiencia con las
+  # llaves públicas del IdP, sin consultarlo en cada petición. Cambiar de IdP es cambiar estas variables.
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${IDP_EMISOR}
+          audiences: ${IDP_AUDIENCIA}
+  mvc:
+    # Los errores salen como Problem Details (RFC 9457).
+    problemdetails:
+      enabled: true
+
+# Orígenes que pueden llamar a la API desde el navegador: la URL pública del front y, en local, Vite.
+ucokudos:
+  cors:
+    origenes: ${CORS_ORIGENES:}
+  # Avisos (ADR-003): el despachador del outbox y sus canales. Si a un canal le falta su llave, sus
+  # avisos fallan, se reintentan y quedan auditados; la API arranca igual.
+  avisos:
+    despachador:
+      activo: true
+      intervalo: PT5S
+    correo:
+      llave: ${BREVO_API_KEY:}
+      remitente: ${CORREO_REMITENTE:}
+      nombre: UCO Kudos
+      url-del-front: ${URL_DEL_FRONT:}
+    whatsapp:
+      token: ${WHATSAPP_TOKEN:}
+      id-telefono: ${WHATSAPP_ID_TELEFONO:}
+      plantilla: kudo_recibido
+      idioma: es_CO
+      version-api: v25.0
 
 server:
   port: ${PORT:8080}
