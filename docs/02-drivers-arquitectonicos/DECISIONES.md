@@ -185,14 +185,16 @@ instancia única), y no se activó el plan B de `D-53`.
 
 ## 11 · Ronda 11 · 14-nov-2026 · Construcción del back
 
-Lo que hubo que decidir al conectar la base de datos y con los resultados de los pasos 10 a 12 de
-`SPK-04`.
+Lo que hubo que decidir al conectar la base de datos, con los resultados de los pasos 10 a 14 de
+`SPK-04` y con el esqueleto del front desplegado.
 
 | ID | Pregunta | Decisión | Se descartó | Qué mueve |
 |---|---|---|---|---|
 | `D-55` | ¿Cómo se separan en la base los datos de cada módulo? | **Un esquema de PostgreSQL por módulo: `kudos`, `avisos`, `identidad`, `auditoria` y `moderacion`. Cada módulo guarda sus tablas en el suyo, y los esquemas los crea la primera migración de Flyway** | Todo en el esquema `public`: más simple, pero la frontera entre módulos no se ve en la base | `ADR-002`, `ADR-017` |
 | `D-56` | ¿Se acepta la CI/CD propuesta en `ADR-023`? | **Sí: GitHub Actions, SonarQube Cloud, GitHub Container Registry y Trivy, con el CD hacia Azure por OIDC. La confirmaron el primer pipeline en verde y los pasos 10 y 11 de `SPK-04` (14-nov-2026). El despliegue del front con la acción de Static Web Apps se comprueba con su esqueleto, sin reabrir la decisión** | Dejarla en Propuesta hasta desplegar el front | `ADR-023` pasa a Aceptada; `ABB-19` y la parte de CI/CD de `ABB-20`; `ESC-15` |
 | `D-57` | ¿Se acepta Java 21 con Spring Boot para el back (`ADR-015`)? | **Sí. El paso 12 de `SPK-04` confirmó que cabe en la réplica de 1 GB: arranca en 15,9 s y usa como máximo unos 345 MiB. Trae resuelto lo que piden los ADR: validación de tokens OIDC y roles, tareas programadas con transacciones para el outbox, OpenAPI, SSE, métricas, ArchUnit y Testcontainers. Además, el autor ya lo usó en FlorLogic** | Python con FastAPI: más liviano y con OpenAPI automático, pero con la seguridad OIDC y el outbox más a mano, un tipado que no revisa el compilador y una caché por proceso si se usan varios *workers* · TypeScript con NestJS, que sigue como plan B | `ADR-015` pasa a Aceptada; `ABB-03` y `ABB-04` |
+| `D-58` | ¿Se acepta React con Vite y TypeScript para el front (`ADR-016`)? | **Sí. El esqueleto del front quedó desplegado el 14-nov-2026: una PWA con React 19, Vite 8 y TypeScript que se instala en el celular y abre sin la barra del navegador, con pruebas, lint, CI y CD en verde** | Vue, que sigue como plan B | `ADR-016` pasa a Aceptada; `ABB-01` |
+| `D-59` | ¿Se acepta la plataforma de `ADR-022`? | **Sí: el back en Azure Container Apps, el front en Azure Static Web Apps y el monitor en UptimeRobot. `SPK-04` comprobó la suscripción, la región común, el despliegue desde GitHub del back y del front, la vuelta atrás en menos de 1 min, la memoria en la réplica de 1 GB y el monitor. El p95 del muro con 50 simultáneos se mide cuando exista su endpoint, como evidencia de `ESC-13`, sin reabrir la decisión** | Dejarla en Propuesta hasta medir el p95 · Pasar al plan B de Render y Vercel (`D-53`), que sigue disponible | `ADR-022` pasa a Aceptada; `ABB-15`, `ABB-17` y la plataforma de `ABB-20`; `ESC-07`, `ESC-15` |
 
 ---
 

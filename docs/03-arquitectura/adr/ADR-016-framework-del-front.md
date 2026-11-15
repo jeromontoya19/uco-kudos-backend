@@ -1,8 +1,8 @@
 # `ADR-016` · Framework del front
 
-**Estado:** Propuesta · **Fecha:** 12-nov-2026
-**Deriva de:** `D-18`; `ADR-005`, `ADR-006`; `DRV-001`; `CN-16`, `CN-20`, `CN-21`
-**La confirma:** el esqueleto del front desplegado (no necesita spike)
+**Estado:** Aceptada el 14-nov-2026 (`D-58`) · **Fecha:** 12-nov-2026
+**Deriva de:** `D-18`, `D-58`; `ADR-005`, `ADR-006`; `DRV-001`; `CN-16`, `CN-20`, `CN-21`
+**La confirmó:** el esqueleto del front desplegado (no necesitó spike)
 
 ## Contexto
 
@@ -24,7 +24,7 @@ mantenibilidad y evolución, Alto es mejor.
 **De dónde sale el riesgo:** en todos depende de cuánto los haya usado el autor. Angular, además, trae
 más estructura de la que necesita una sola pantalla de publicar y un muro.
 
-## Propuesta
+## Decisión
 
 **React con Vite y TypeScript.** Tiene el ecosistema más amplio para lo que pide `ADR-006`: un
 complemento de Vite para la PWA, generación de tipos desde OpenAPI, Vitest para las pruebas unitarias
@@ -43,4 +43,13 @@ FlorLogic. **Plan B:** Vue con Vite, que es más simple de aprender.
 
 ## Observaciones
 
-—
+`[:W:]` 14-nov-2026: **el esqueleto del front quedó desplegado**, que es lo que confirma este ADR. Está
+en el repositorio `uco-kudos-frontend`.
+- **Stack:** React 19 con Vite 8 y TypeScript.
+- **PWA instalable:** se instala con `vite-plugin-pwa`, que genera el manifiesto y el *service
+  worker*; en el celular abre sin la barra del navegador.
+- **Pruebas:** Vitest y Testing Library, con lint de oxlint.
+- **CI y CD en verde:** el CD lo despliega en Static Web Apps.
+- **Dónde abrirla:** https://happy-bush-0fa58021e.4.azurestaticapps.net (`SPK-04`, paso 10).
+
+Con eso el autor aceptó este ADR (`D-58`).

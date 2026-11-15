@@ -506,5 +506,5 @@ evidencia que demuestra la medida.
 | `ESC-12` | Capacidad para ser Soportado | `ADR-024` | Pendiente |
 | `ESC-13` | Rendimiento | `ADR-004`, `ADR-011`, `ADR-022` | Pendiente |
 | `ESC-14` | Rendimiento | `ADR-003`, `ADR-021` | Pendiente |
-| `ESC-15` | Desplegabilidad | `ADR-013`, `ADR-022`, `ADR-023` | **Cumplido para el back** (`SPK-04`, pasos 10 y 11, 14-nov-2026): el CD despliega y verifica en menos de 2 min desde el merge, sin pasos manuales; la vuelta atrás tardó 47 s, y el regreso, 44 s. Falta el front |
+| `ESC-15` | Desplegabilidad | `ADR-013`, `ADR-022`, `ADR-023` | **Cumplido para el back** (`SPK-04`, pasos 10 y 11, 14-nov-2026): el CD despliega y verifica en menos de 2 min desde el merge, sin pasos manuales; la vuelta atrás tardó 47 s, y el regreso, 44 s. El front también se despliega por CD, en 57 s; falta probar su vuelta atrás |
 | `ESC-16` | Experiencia de usuario | `ADR-006`, `ADR-016` | Pendiente |

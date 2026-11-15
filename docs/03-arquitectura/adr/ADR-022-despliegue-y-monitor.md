@@ -1,8 +1,8 @@
 # `ADR-022` · Plataforma de despliegue y monitor de disponibilidad
 
-**Estado:** Propuesta · **Fecha:** 12-nov-2026
-**Deriva de:** `D-15`, `D-31`, `D-39`, `D-43`, `D-53`, `D-54`; `ADR-011`, `ADR-014`; `CN-03`, `CN-13`, `CN-19`; `T-9`
-**La confirma:** `SPK-04`
+**Estado:** Aceptada el 14-nov-2026 (`D-59`) · **Fecha:** 12-nov-2026
+**Deriva de:** `D-15`, `D-31`, `D-39`, `D-43`, `D-53`, `D-54`, `D-59`; `ADR-011`, `ADR-014`; `CN-03`, `CN-13`, `CN-19`; `T-9`
+**La confirmó:** `SPK-04` (partes 1 a 3 y pasos 12 y 14)
 
 ## Contexto
 
@@ -59,7 +59,7 @@ mantenibilidad y evolución, Alto es mejor.
 Las pruebas de Application Insights miden desde el mismo proveedor que vigilan: si la suscripción se
 deshabilita (`T-9`), el monitor se apaga con ella.
 
-## Propuesta
+## Decisión
 
 - **El back en Azure Container Apps**, plan de consumo, en `canadacentral`, junto a la base
   (`ADR-017`): réplicas de 0,5 vCPU y 1 GB, con **mínimo 1 y máximo 1**, es decir, siempre encendida
@@ -146,12 +146,18 @@ la base y los archivos pasó a `canadacentral`.
 | `ucokudos-db-4632` | PostgreSQL, servidor flexible B1ms | `canadacentral` | Base `ucokudos`, con un esquema por módulo que crea Flyway (`ADR-017`). Solo acepta TLS, y el firewall solo deja entrar a los servicios de Azure |
 | `ucokudos4632` | Cuenta de almacenamiento con el contenedor privado `adjuntos` | `canadacentral` | Creado y vacío |
 | `workspace-rgucokudos…` | Log Analytics, que creó el entorno de Container Apps | `canadacentral` | Recibe los registros del entorno |
-| `ucokudos-web` | Static Web Apps, plan Free | `westus2` | Creado vacío, sin conexión con GitHub; muestra la página de bienvenida de Azure |
+| `ucokudos-web` | Static Web Apps, plan Free | `westus2` | Sirve la PWA desplegada por el CD del front (versión `9b1826c`) en https://happy-bush-0fa58021e.4.azurestaticapps.net; se instala en el celular |
 | Presupuesto | *Cost Management* | — | Creado, con avisos al correo personal |
 
-`ADR-022` sigue en Propuesta hasta que GitHub Actions despliegue también el front en Static Web Apps.
-La parte del back ya está probada (`SPK-04`, 14-nov-2026): el CD despliega en Container Apps por OIDC,
-con la identidad `github-uco-kudos-backend` y permiso solo sobre `rg-uco-kudos` (paso 10), y volver a
-la imagen anterior tarda menos de 1 min (paso 11). El back cabe con holgura en la réplica: unos
-345 MiB de 1 GiB y 16 s de arranque (paso 12). El monitor de UptimeRobot ya revisa la salud cada
-5 min y tiene una página pública de estado (paso 14). Queda además el p95 del muro (parte 4).
+**Lo que ya probó `SPK-04` (14-nov-2026):**
+- **El back:** el CD lo despliega en Container Apps por OIDC, con la identidad
+  `github-uco-kudos-backend` y permiso solo sobre `rg-uco-kudos` (paso 10). Volver a la imagen
+  anterior tarda menos de 1 min (paso 11).
+- **El front:** su CD lo despliega en Static Web Apps, y la PWA se instala en el celular (paso 10).
+- **La réplica:** el back cabe con holgura, con unos 345 MiB de 1 GiB y 16 s de arranque (paso 12).
+- **El monitor:** UptimeRobot revisa la salud cada 5 min y tiene una página pública de estado
+  (paso 14).
+
+De las seis cosas que debía comprobar el spike, falta solo el p95 del muro con 50 simultáneos
+(`ESC-13`), que espera el endpoint del muro. Con lo demás comprobado, el autor aceptó este ADR
+(`D-59`); el p95 queda como evidencia de `ESC-13` y no reabre la decisión.

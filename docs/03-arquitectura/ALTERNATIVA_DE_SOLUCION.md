@@ -4,7 +4,7 @@
 
 > §1, §2, §3 y §7 cerradas con las decisiones de las rondas 8 y 9 (`D-45` a `D-52`). §4 y §5 resumen
 > las tecnologías: las ya decididas (ADR aceptados) y las propuestas (`ADR-015` a `ADR-025`, de las que
-> `ADR-015` y `ADR-023` ya quedaron aceptadas), con los spikes que las confirman. La §6 se llena cuando
+> `ADR-015`, `ADR-016`, `ADR-022` y `ADR-023` ya quedaron aceptadas), con los spikes que las confirman. La §6 se llena cuando
 > los spikes confirmen las propuestas.
 > La ronda 10 (`D-53`, `D-54`) lleva la plataforma a Azure con el crédito de estudiante: cambian el
 > presupuesto, varios SBB y `SPK-04`; la alternativa elegida no cambia. El 13-nov, `SPK-04` movió la
@@ -187,7 +187,7 @@ spike de la §5 o la construcción.
 
 | ABB | SBB (con qué) | Estado | Otros candidatos evaluados | ADR |
 |---|---|---|---|---|
-| `ABB-01` Cliente móvil | React con Vite y TypeScript, como PWA | Propuesta | Vue, Angular, Svelte | `ADR-016` (el tipo de cliente, en `ADR-006`) |
+| `ABB-01` Cliente móvil | React con Vite y TypeScript, como PWA | Aceptada (`D-58`) | Vue, Angular, Svelte | `ADR-016` (el tipo de cliente, en `ADR-006`) |
 | `ABB-02` Proveedor de identidad | Auth0 o Zitadel Cloud en producción; Keycloak en local | Propuesta | Keycloak autohospedado, Supabase Auth | `ADR-018` (el patrón, en `ADR-007`) |
 | `ABB-03` Autorización por rol | La propia API, con el framework del back | Aceptada (`D-57`) | — | `ADR-015` (la regla, en `ADR-007`) |
 | `ABB-04` API | Java 21 con Spring Boot | Aceptada (`D-57`) | NestJS, ASP.NET Core, FastAPI | `ADR-015` (la forma, en `ADR-001` y `ADR-002`) |
@@ -201,12 +201,12 @@ spike de la §5 o la construcción.
 | `ABB-12` Canal en vivo | Server-Sent Events | Propuesta | WebSocket, consulta periódica | `ADR-021` |
 | `ABB-13` Auditoría | Tabla de solo inserción en la base | Aceptada (el motor, con `ADR-017`) | — | `ADR-008` |
 | `ABB-14` Observabilidad | OpenTelemetry hacia Application Insights (Azure Monitor); Grafana en local | Propuesta | Grafana Cloud, solo registros de la plataforma, Sentry | `ADR-024` |
-| `ABB-15` Monitor de disponibilidad | UptimeRobot | Propuesta | Better Stack | `ADR-022` (la meta, en `ADR-014`) |
+| `ABB-15` Monitor de disponibilidad | UptimeRobot | Aceptada (`D-59`) | Better Stack | `ADR-022` (la meta, en `ADR-014`) |
 | `ABB-16` Copias de seguridad | Tarea diaria en GitHub Actions hacia otro proveedor | Propuesta | Copias del proveedor, copia manual | `ADR-025` (la meta, en `ADR-014`) |
-| `ABB-17` Configuración y secretos | Variables de entorno; secretos en GitHub y en los secretos de Container Apps (Key Vault si sobra tiempo) | Propuesta | — | `ADR-022`, `ADR-023` |
+| `ABB-17` Configuración y secretos | Variables de entorno; secretos en GitHub y en los secretos de Container Apps (Key Vault si sobra tiempo) | Aceptada (`D-56`, `D-59`) | — | `ADR-022`, `ADR-023` |
 | `ABB-18` Borde de la API | HTTPS de la plataforma; CORS, validación y límite de peticiones en la API; Nginx con ModSecurity solo en local | Aceptada | WAF gratuito delante | `ADR-010` |
 | `ABB-19` Integración continua | GitHub Actions, SonarQube Cloud y Trivy | Aceptada (`D-56`) | GitLab CI, CircleCI | `ADR-023` |
-| `ABB-20` Despliegue continuo | GitHub Actions y GitHub Container Registry, hacia Azure Container Apps y Azure Static Web Apps (plan B: Render y Vercel) | Aceptada la CI/CD (`D-56`); la plataforma sigue en Propuesta (`ADR-022`) | Docker Hub, Azure Container Registry; Azure App Service B1 (cuota 0 en la suscripción), Koyeb, Cloud Run | `ADR-023`, `ADR-022` |
+| `ABB-20` Despliegue continuo | GitHub Actions y GitHub Container Registry, hacia Azure Container Apps y Azure Static Web Apps (plan B: Render y Vercel) | Aceptada: la CI/CD (`D-56`) y la plataforma (`D-59`) | Docker Hub, Azure Container Registry; Azure App Service B1 (cuota 0 en la suscripción), Koyeb, Cloud Run | `ADR-023`, `ADR-022` |
 | `ABB-21` Entorno local | Docker Compose con dobles de los servicios externos | Aceptada | Solo en la nube | `ADR-012` |
 
 ---
@@ -234,7 +234,7 @@ el despliegue, y conviene saberlo hoy.
 
 | Spike | Estado | Qué falta |
 |---|---|---|
-| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`) | El despliegue del front y el p95 del muro |
+| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`). El front se despliega en Static Web Apps como una PWA instalable | El p95 del muro |
 | `SPK-01` | Respondido: el `hello_world` llegó al celular desde la página y desde una llamada HTTP a la Cloud API de Meta (v25.0), con el número de prueba. La plantilla `kudo_recibido` está en revisión | La aprobación de la plantilla y el token permanente para producción |
 | `SPK-02`, `SPK-03`, `SPK-05`, `SPK-06` | Sin empezar | Se corren al construir cada adaptador |
 
