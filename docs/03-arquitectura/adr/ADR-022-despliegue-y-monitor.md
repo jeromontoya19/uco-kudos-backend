@@ -152,5 +152,6 @@ la base y los archivos pasó a `canadacentral`.
 `ADR-022` sigue en Propuesta hasta que GitHub Actions despliegue también el front en Static Web Apps.
 La parte del back ya está probada (`SPK-04`, 14-nov-2026): el CD despliega en Container Apps por OIDC,
 con la identidad `github-uco-kudos-backend` y permiso solo sobre `rg-uco-kudos` (paso 10), y volver a
-la imagen anterior tarda menos de 1 min (paso 11). Quedan además la memoria medida en Azure, el p95 del
-muro y el monitor (parte 4).
+la imagen anterior tarda menos de 1 min (paso 11). El back cabe con holgura en la réplica: unos
+345 MiB de 1 GiB y 16 s de arranque (paso 12). El monitor de UptimeRobot ya revisa la salud cada
+5 min y tiene una página pública de estado (paso 14). Queda además el p95 del muro (parte 4).
