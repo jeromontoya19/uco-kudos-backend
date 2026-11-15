@@ -1,8 +1,8 @@
 # `ADR-015` · Lenguaje y framework del back
 
-**Estado:** Propuesta · **Fecha:** 12-nov-2026
-**Deriva de:** `D-18`; `ADR-002`, `ADR-003`, `ADR-005`, `ADR-007`; `CN-03`, `CN-05`, `CN-15`, `CN-16`
-**La confirma:** `SPK-04` (memoria y arranque en la réplica de 1 GB)
+**Estado:** Aceptada el 14-nov-2026 (`D-57`) · **Fecha:** 12-nov-2026
+**Deriva de:** `D-18`, `D-57`; `ADR-002`, `ADR-003`, `ADR-005`, `ADR-007`; `CN-03`, `CN-05`, `CN-15`, `CN-16`
+**La confirmó:** `SPK-04`, paso 12 (memoria y arranque en la réplica de 1 GB)
 
 ## Contexto
 
@@ -32,7 +32,7 @@ NestJS usa el mismo lenguaje del front, pero el autor tiene menos práctica con 
 ASP.NET Core el autor no tiene experiencia. FastAPI es menos estricto con el tipado y con la
 separación en capas.
 
-## Propuesta
+## Decisión
 
 **Java 21 con Spring Boot.** Trae resuelto lo que piden los ADR aceptados: tareas programadas para el
 despachador (`ADR-003`), validación de tokens OIDC (`ADR-007`), generación del contrato OpenAPI
@@ -59,3 +59,8 @@ gratuitas, eso pesaría.
 
 Si `SPK-04` muestra que no cabe en la réplica de 1 GB, se prueba una réplica de 1 vCPU y 2 GB; si
 tampoco, se pasa al plan B y este ADR se marca Rechazada.
+
+`[:W:]` 14-nov-2026: **sí cabe** (`SPK-04`, paso 12). En la réplica de Container Apps (0,5 vCPU y
+1 GiB), la API con PostgreSQL y Flyway arranca en 15,9 s y usa como máximo unos 345 MiB, cerca de un
+tercio de la memoria. La JVM tiene como tope el 75 % del contenedor. No hace falta la réplica de 2 GB,
+y el autor lo aceptó (`D-57`).
