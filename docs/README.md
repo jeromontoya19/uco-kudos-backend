@@ -10,10 +10,11 @@ pull request cuando queda completo.
 | 0 | [Decisiones del autor](02-drivers-arquitectonicos/DECISIONES.md) | Lo que el enunciado no dice y se decidió en rondas de preguntas |
 | 1 | [Drivers arquitectónicos](02-drivers-arquitectonicos/DRIVERS_ARQUITECTONICOS.md) | Qué se construye, bajo qué restricciones y qué atributos de calidad mandan |
 | 2 | [Alternativa de solución](03-arquitectura/ALTERNATIVA_DE_SOLUCION.md) | Qué estilo se eligió, con qué bloques (ABB) y con qué tecnología (SBB) |
-| 3 | [C4](03-arquitectura/C4.md) | Contexto, contenedores y despliegue |
+| 3 | [C4](03-arquitectura/C4.md) | Contexto, contenedores, componentes de la API y despliegue |
 | 4 | [Spikes](03-arquitectura/spikes/) | Las pruebas cortas que respaldan las decisiones riesgosas |
 | 5 | [ADR](03-arquitectura/adr/README.md) | Cada decisión, con su contexto, alternativas y consecuencias |
-| 6 | Diseño detallado · Prácticas · Manual · Evidencias | Se agregan al construir |
+| 6 | [Diseño detallado](03-arquitectura/DISENO_DETALLADO.md) | Los paquetes del back y cómo se vigilan; las secuencias, cuando estén |
+| 7 | Prácticas · Manual · Evidencias | Se agregan al construir |
 
 ## Convenciones
 
