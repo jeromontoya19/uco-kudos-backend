@@ -7,6 +7,7 @@ pull request cuando queda completo.
 
 | # | Documento | Qué responde |
 |---|---|---|
+| 0 | [Decisiones del autor](02-drivers-arquitectonicos/DECISIONES.md) | Lo que el enunciado no dice y se decidió en rondas de preguntas |
 | 1 | [Drivers arquitectónicos](02-drivers-arquitectonicos/DRIVERS_ARQUITECTONICOS.md) | Qué se construye, bajo qué restricciones y qué atributos de calidad mandan |
 | 2 | [Alternativa de solución](03-arquitectura/ALTERNATIVA_DE_SOLUCION.md) | Qué estilo se eligió, con qué bloques (ABB) y con qué tecnología (SBB) |
 | 3 | [C4](03-arquitectura/C4.md) | Contexto, contenedores y despliegue |
@@ -18,9 +19,12 @@ pull request cuando queda completo.
 
 | Prefijo | Qué identifica | Dónde vive |
 |---|---|---|
+| `D-nn` | Decisión del autor | `DECISIONES.md`, una sección por ronda |
+| `T-nn` | Tensión entre dos decisiones, con su estado | `DECISIONES.md`, sección *Tensiones* |
 | `RF-nnn` | Funcionalidad significativa | Drivers §2 |
 | `CN-nn` | Restricción. Una sola serie: las de negocio desde `CN-01` y las técnicas desde `CN-10` | Drivers §3 y §4 |
-| `DRV-nnn` | Driver dado por el enunciado | Drivers §5 |
+| `DRV-nnn` | Driver: los 7 del enunciado (obligatorios) y los que identifica el autor | Drivers §5 |
+| `P-nn` | Pregunta de caracterización | Drivers §7 |
 | `ESC-nn` | Escenario de calidad | Drivers §8 |
 | `ALT-n` | Alternativa de solución | Alternativa §2 |
 | `ABB-nn` | Bloque de construcción de arquitectura | Alternativa §3 |
