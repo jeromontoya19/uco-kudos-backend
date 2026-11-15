@@ -1,5 +1,6 @@
 package co.edu.uco.ucokudos.kudos.aplicacion.puerto.salida;
 
+import java.util.List;
 import java.util.Optional;
 
 import co.edu.uco.ucokudos.kudos.dominio.Categoria;
@@ -11,5 +12,8 @@ import co.edu.uco.ucokudos.kudos.dominio.IdCategoria;
 public interface RepositorioDeCategorias {
 
 	Optional<Categoria> buscarPorId(IdCategoria id);
+
+	/** Las categorías activas, ordenadas por nombre. */
+	List<Categoria> listarActivas();
 
 }
