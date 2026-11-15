@@ -10,8 +10,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 import co.edu.uco.ucokudos.auditoria.aplicacion.puerto.entrada.RegistrarEnAuditoria;
 import co.edu.uco.ucokudos.avisos.aplicacion.puerto.entrada.ProgramarAvisos;
 import co.edu.uco.ucokudos.identidad.aplicacion.puerto.entrada.ConsultarPersonas;
+import co.edu.uco.ucokudos.kudos.aplicacion.ConsultaDeCategorias;
+import co.edu.uco.ucokudos.kudos.aplicacion.ConsultaDelMuro;
 import co.edu.uco.ucokudos.kudos.aplicacion.PublicacionDeKudos;
+import co.edu.uco.ucokudos.kudos.aplicacion.puerto.entrada.ConsultarCategorias;
+import co.edu.uco.ucokudos.kudos.aplicacion.puerto.entrada.ConsultarMuro;
 import co.edu.uco.ucokudos.kudos.aplicacion.puerto.entrada.PublicarKudo;
+import co.edu.uco.ucokudos.kudos.aplicacion.puerto.salida.LecturaDelMuro;
 import co.edu.uco.ucokudos.kudos.aplicacion.puerto.salida.RepositorioDeCategorias;
 import co.edu.uco.ucokudos.kudos.aplicacion.puerto.salida.RepositorioDeKudos;
 
@@ -28,6 +33,16 @@ class ConfiguracionDeKudos {
 			PlatformTransactionManager transacciones) {
 		PublicarKudo publicacion = new PublicacionDeKudos(kudos, categorias, personas, avisos, auditoria, reloj);
 		return new PublicarKudoEnTransaccion(publicacion, new TransactionTemplate(transacciones));
+	}
+
+	@Bean
+	ConsultarMuro consultarMuro(LecturaDelMuro muro, ConsultarPersonas personas) {
+		return new ConsultaDelMuro(muro, personas);
+	}
+
+	@Bean
+	ConsultarCategorias consultarCategorias(RepositorioDeCategorias categorias) {
+		return new ConsultaDeCategorias(categorias);
 	}
 
 }
