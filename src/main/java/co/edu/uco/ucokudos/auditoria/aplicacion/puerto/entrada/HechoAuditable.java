@@ -14,6 +14,9 @@ import java.util.UUID;
  */
 public record HechoAuditable(String accion, UUID actor, String tipoRecurso, UUID idRecurso, Resultado resultado) {
 
+	/** El actor de lo que hace la propia API sin que nadie lo pida en ese momento, como el despachador. */
+	public static final UUID SISTEMA = new UUID(0L, 0L);
+
 	public HechoAuditable {
 		Objects.requireNonNull(accion, "accion");
 		Objects.requireNonNull(actor, "actor");
