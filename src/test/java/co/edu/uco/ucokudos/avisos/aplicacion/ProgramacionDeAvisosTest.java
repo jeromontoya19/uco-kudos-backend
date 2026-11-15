@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,12 +23,13 @@ class ProgramacionDeAvisosTest {
 
 	@Test
 	void deja_un_aviso_pendiente_por_cada_canal_listo_para_enviarse() {
-		List<Aviso> guardados = new ArrayList<>();
-		ProgramacionDeAvisos programacion = new ProgramacionDeAvisos(guardados::addAll, Clock.fixed(AHORA, ZoneOffset.UTC));
+		AvisosEnMemoria outbox = new AvisosEnMemoria();
+		ProgramacionDeAvisos programacion = new ProgramacionDeAvisos(outbox, Clock.fixed(AHORA, ZoneOffset.UTC));
 		KudoPorAvisar kudo = new KudoPorAvisar(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "Empatía");
 
 		programacion.programar(kudo);
 
+		List<Aviso> guardados = outbox.todos();
 		assertThat(guardados).extracting(Aviso::canal).containsExactly(Canal.CORREO, Canal.WHATSAPP, Canal.PUSH);
 		assertThat(guardados).allSatisfy(aviso -> {
 			assertThat(aviso.estado()).isEqualTo(EstadoDelAviso.PENDIENTE);

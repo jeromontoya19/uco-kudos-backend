@@ -34,6 +34,23 @@ spring:
 ucokudos:
   cors:
     origenes: ${CORS_ORIGENES:}
+  # Avisos (ADR-003): el despachador del outbox y sus canales. Si a un canal le falta su llave, sus
+  # avisos fallan, se reintentan y quedan auditados; la API arranca igual.
+  avisos:
+    despachador:
+      activo: true
+      intervalo: PT5S
+    correo:
+      llave: ${BREVO_API_KEY:}
+      remitente: ${CORREO_REMITENTE:}
+      nombre: UCO Kudos
+      url-del-front: ${URL_DEL_FRONT:}
+    whatsapp:
+      token: ${WHATSAPP_TOKEN:}
+      id-telefono: ${WHATSAPP_ID_TELEFONO:}
+      plantilla: kudo_recibido
+      idioma: es_CO
+      version-api: v25.0
 
 server:
   port: ${PORT:8080}
