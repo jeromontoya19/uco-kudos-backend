@@ -96,7 +96,17 @@ cambio con cualquier vulnerabilidad CRÍTICA o ALTA que ya tenga corrección (ve
     descarga sin credenciales.
 - **Vuelta atrás:** el workflow manual, lanzado desde `main`, tardó 47 s, y el regreso, 44 s
   (`SPK-04`, paso 11; `ESC-15`).
+- **Vuelta atrás del front:** Static Web Apps no guarda versiones y el front no tiene imagen que
+  redesplegar, así que su workflow manual compila el commit anterior con su propio `package-lock` y lo
+  publica. Solo acepta commits de la historia de `main`. Tardó 38 s, y el regreso, 44 s, y la
+  compilación dio el mismo JavaScript que se había publicado (`SPK-04`, paso 11; `ESC-15`).
 
 Con esto se cumplió lo que confirmaba este ADR, que el autor aceptó el 14-nov-2026 (`D-56`). Ese
 mismo día quedó comprobado también el front: su CI completa pasó, y su CD lo desplegó con la acción de
 Static Web Apps en 57 s (`SPK-04`, paso 10).
+
+`[:W:]` 14-nov-2026: en los PR #1 y #2 del front, la CI completa corrió sin Sonar, porque faltaba el
+secreto `SONAR_TOKEN`. Desde el PR #4, Sonar corre en la CI y el análisis automático de SonarQube Cloud
+quedó apagado. El *quality gate* pasó, con 100 % de cobertura, después de corregir tres reglas en los
+workflows y en el script de verificación: `npm ci --ignore-scripts`, `curl` solo por HTTPS y `[[` en
+las condiciones. Evidencia: `docs/evidencias/ci/ci-pr4-front-sonar-quality-gate.png`.

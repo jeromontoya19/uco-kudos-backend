@@ -50,3 +50,20 @@ instancias, el push necesita un relevo entre ellas (`T-3`, evolución de `ADR-01
 minutos sin tráfico se corta. El canal envía un comentario de latido cada 30 s, y si aun así se
 corta, el navegador se reconecta solo. `SPK-03` lo comprueba contra la URL pública. El ingreso de
 Container Apps también admite WebSocket, por si se pasa al plan B.
+
+`[:W:]` **El lado del back quedó construido el 15-nov-2026** (versión `8cb3bf6`). Sigue en Propuesta
+hasta que el front reciba el push y se mida `ESC-14`.
+- **El flujo:** `GET /api/avisos/en-vivo` (`text/event-stream`), solo con sesión. Cada pestaña abierta
+  de la persona es una conexión, y cada conexión dura 30 min; después, el cliente se vuelve a
+  conectar.
+- **El evento:** `kudo-recibido` lleva el Kudo, el autor y la categoría. Si la persona no tiene
+  ninguna conexión abierta, el push queda OMITIDO y se audita. Así quedó en producción el 15-nov
+  (`docs/evidencias/notificaciones/avisos-auditoria.png`).
+- **El latido** es cada **25 s**, no cada 30, para quedar con margen frente al corte por inactividad.
+  También sirve para descubrir las pestañas que ya se cerraron.
+- **El token** (el `[!]` de la propuesta) se resuelve sin cookie y sin token en la URL. El front abre
+  el flujo con `fetch` y la cabecera `Authorization`, en lugar de `EventSource`, y la API lo valida
+  igual que en cualquier otra petición. A cambio, el front tiene que reconectarse por su cuenta, porque
+  `fetch` no lo hace solo.
+
+**Falta (`SPK-03`):** que el front abra el flujo y medir el push en ≤ 2 s contra la URL pública.

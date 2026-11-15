@@ -85,7 +85,10 @@ costo se vigila con la alerta de presupuesto.
 **Volver atrás (`ESC-15`):** cada despliegue crea una revisión nueva. Volver atrás es desplegar la
 etiqueta de la imagen anterior, o activar la revisión anterior, sin reconstruir nada (`ADR-023`).
 `SPK-04` mide que tome ≤ 10 min. `[:W:]` 14-nov-2026: tomó 47 s, y el regreso, 44 s (`SPK-04`,
-paso 11).
+paso 11). En el front, Static Web Apps no guarda versiones anteriores: volver atrás es compilar el
+commit anterior con su propio `package-lock` y publicarlo con un workflow manual. `[:W:]` 14-nov-2026:
+tomó 38 s, y el regreso, 44 s, y la compilación dio el mismo JavaScript que se había publicado
+(`SPK-04`, paso 11).
 
 **Costo estimado** (se confirma en la calculadora de Azure y en `SPK-04`):
 
@@ -142,11 +145,11 @@ la base y los archivos pasó a `canadacentral`.
 
 | Recurso | Servicio | Región | Estado |
 |---|---|---|---|
-| `ucokudos-api` | Container Apps, en el entorno `env-uco-kudos` | `canadacentral` | Corre el back real, desplegado por el CD desde GitHub Container Registry (versión `c05718c`), con la salud en UP. Recibe la conexión a la base por variables, y la contraseña, como el secreto `bd-contrasena` |
+| `ucokudos-api` | Container Apps, en el entorno `env-uco-kudos` (de tipo *Express*) | `canadacentral` | `[:W:]` Al 15-nov corre el back real con la seguridad y el despachador de avisos (versión `8cb3bf6`), desplegado por el CD desde GitHub Container Registry, con la salud en UP. Recibe la configuración por variables. Los secretos son `bd-contrasena`, `brevo-api-key` y `whatsapp-token`. Un secreto nuevo solo se lee al desplegar otra vez, porque el entorno Express no deja reiniciar la revisión (`SPK-04`, hallazgo del 15-nov) |
 | `ucokudos-db-4632` | PostgreSQL, servidor flexible B1ms | `canadacentral` | Base `ucokudos`, con un esquema por módulo que crea Flyway (`ADR-017`). Solo acepta TLS, y el firewall solo deja entrar a los servicios de Azure |
 | `ucokudos4632` | Cuenta de almacenamiento con el contenedor privado `adjuntos` | `canadacentral` | Creado y vacío |
 | `workspace-rgucokudos…` | Log Analytics, que creó el entorno de Container Apps | `canadacentral` | Recibe los registros del entorno |
-| `ucokudos-web` | Static Web Apps, plan Free | `westus2` | Sirve la PWA desplegada por el CD del front (versión `9b1826c`) en https://happy-bush-0fa58021e.4.azurestaticapps.net; se instala en el celular |
+| `ucokudos-web` | Static Web Apps, plan Free | `westus2` | Sirve la PWA desplegada por el CD del front (versión `d02d788`) en https://happy-bush-0fa58021e.4.azurestaticapps.net; se instala en el celular |
 | Presupuesto | *Cost Management* | — | Creado, con avisos al correo personal |
 
 **Lo que ya probó `SPK-04` (14-nov-2026):**
@@ -154,6 +157,7 @@ la base y los archivos pasó a `canadacentral`.
   `github-uco-kudos-backend` y permiso solo sobre `rg-uco-kudos` (paso 10). Volver a la imagen
   anterior tarda menos de 1 min (paso 11).
 - **El front:** su CD lo despliega en Static Web Apps, y la PWA se instala en el celular (paso 10).
+  Volver a la versión anterior también tarda menos de 1 min (paso 11).
 - **La réplica:** el back cabe con holgura, con unos 345 MiB de 1 GiB y 16 s de arranque (paso 12).
 - **El monitor:** UptimeRobot revisa la salud cada 5 min y tiene una página pública de estado
   (paso 14).
