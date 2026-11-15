@@ -52,3 +52,35 @@ encendida (`CN-03`, `D-15`).
 
 **Disparador para un broker:** varias instancias de la API, o más avisos de los que el despachador
 alcanza a enviar (§3.1 de la alternativa de solución).
+
+`[:W:]` **Construido y en producción el 15-nov-2026** (back, versión `8cb3bf6`):
+- **El outbox** es la tabla `avisos.aviso`, con un aviso por canal y por Kudo (no se repite el par
+  Kudo–canal). Se escribe en la misma transacción que el Kudo y su registro de auditoría.
+- **El despachador** es una tarea programada de la API. Cada 5 s toma hasta 20 avisos listos y
+  despacha cada uno en su propia transacción. Si uno revienta, la tanda sigue con los demás.
+- **Los reintentos** esperan 1, 2, 4, 8 y 15 min: son 5 intentos que suman 30 min. Si el quinto
+  también falla, el aviso queda FALLIDO.
+- **Los canales** son adaptadores del mismo puerto (`CanalDeAviso`), uno por canal: correo por Brevo
+  (`ADR-019`), WhatsApp por Meta (`ADR-020`) y push por SSE (`ADR-021`). Si un canal se queda sin
+  adaptador, la API no arranca.
+- **La auditoría** guarda cada intento como `AVISO_CORREO`, `AVISO_WHATSAPP` o `AVISO_PUSH`. Usa el
+  Kudo como recurso y el sistema como actor, y el resultado es EXITO, FALLO u OMITIDO.
+- **Sin llaves no se cae nada:** si falta la llave de un proveedor, sus avisos fallan y se reintentan,
+  y la API arranca igual.
+
+**Pruebas automatizadas:**
+- `AvisoTest`: la política de reintentos.
+- `DespachoDeAvisosIT`: el flujo completo contra PostgreSQL. Sin llaves, el correo y WhatsApp quedan
+  para reintento, el push se omite y todo queda auditado contra el Kudo.
+- `DespachadorProgramadoTest`: un aviso que revienta no detiene la tanda.
+- `CanalesHttpTest`: qué le pide cada adaptador al proveedor y cómo traduce sus respuestas.
+
+**En producción (15-nov-2026):** un Kudo del docente al estudiante llegó por correo **4,0 s** después
+de publicarse y por WhatsApp **4,6 s** después. El push quedó omitido porque el destinatario no tenía
+la aplicación abierta. Evidencias en `docs/evidencias/notificaciones/`: `avisos-auditoria.png`,
+`avisos-correo.png` y `avisos-whatsapp.png`.
+
+`[!]` **Pendiente:**
+- Los adaptadores todavía no mandan el identificador del aviso para evitar duplicados, así que la
+  entrega sigue siendo al menos una vez.
+- Las métricas por canal (punto 5) esperan `ADR-024`.
