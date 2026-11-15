@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import co.edu.uco.ucokudos.identidad.aplicacion.puerto.entrada.Contacto;
 import co.edu.uco.ucokudos.identidad.aplicacion.puerto.entrada.PersonaActiva;
 import co.edu.uco.ucokudos.identidad.aplicacion.puerto.entrada.PersonaIdentificada;
 import co.edu.uco.ucokudos.identidad.aplicacion.puerto.salida.RepositorioDePersonas;
@@ -58,6 +59,14 @@ class ConsultaDePersonasTest {
 			.contains(new PersonaIdentificada(DOCENTE.id(), "Docente", "DOCENTE"));
 		assertThat(consulta.porSujeto("auth0|estudiante")).isEmpty();
 		assertThat(consulta.porSujeto("auth0|sin-persona")).isEmpty();
+	}
+
+	@Test
+	void da_el_contacto_para_avisar_aunque_la_persona_este_inactiva() {
+		assertThat(consulta.contactoDe(DOCENTE.id())).contains(new Contacto(DOCENTE.id(), "Docente", DOCENTE.correo(),
+				DOCENTE.celular()));
+		assertThat(consulta.contactoDe(ESTUDIANTE_INACTIVO.id())).isPresent();
+		assertThat(consulta.contactoDe(UUID.randomUUID())).isEmpty();
 	}
 
 	private static Persona persona(String nombre, Rol rol, boolean activa) {
