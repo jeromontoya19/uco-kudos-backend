@@ -185,12 +185,14 @@ instancia única), y no se activó el plan B de `D-53`.
 
 ## 11 · Ronda 11 · 14-nov-2026 · Construcción del back
 
-Lo que hubo que decidir al conectar la base de datos y al cerrar los pasos 10 y 11 de `SPK-04`.
+Lo que hubo que decidir al conectar la base de datos y con los resultados de los pasos 10 a 12 de
+`SPK-04`.
 
 | ID | Pregunta | Decisión | Se descartó | Qué mueve |
 |---|---|---|---|---|
 | `D-55` | ¿Cómo se separan en la base los datos de cada módulo? | **Un esquema de PostgreSQL por módulo: `kudos`, `avisos`, `identidad`, `auditoria` y `moderacion`. Cada módulo guarda sus tablas en el suyo, y los esquemas los crea la primera migración de Flyway** | Todo en el esquema `public`: más simple, pero la frontera entre módulos no se ve en la base | `ADR-002`, `ADR-017` |
 | `D-56` | ¿Se acepta la CI/CD propuesta en `ADR-023`? | **Sí: GitHub Actions, SonarQube Cloud, GitHub Container Registry y Trivy, con el CD hacia Azure por OIDC. La confirmaron el primer pipeline en verde y los pasos 10 y 11 de `SPK-04` (14-nov-2026). El despliegue del front con la acción de Static Web Apps se comprueba con su esqueleto, sin reabrir la decisión** | Dejarla en Propuesta hasta desplegar el front | `ADR-023` pasa a Aceptada; `ABB-19` y la parte de CI/CD de `ABB-20`; `ESC-15` |
+| `D-57` | ¿Se acepta Java 21 con Spring Boot para el back (`ADR-015`)? | **Sí. El paso 12 de `SPK-04` confirmó que cabe en la réplica de 1 GB: arranca en 15,9 s y usa como máximo unos 345 MiB. Trae resuelto lo que piden los ADR: validación de tokens OIDC y roles, tareas programadas con transacciones para el outbox, OpenAPI, SSE, métricas, ArchUnit y Testcontainers. Además, el autor ya lo usó en FlorLogic** | Python con FastAPI: más liviano y con OpenAPI automático, pero con la seguridad OIDC y el outbox más a mano, un tipado que no revisa el compilador y una caché por proceso si se usan varios *workers* · TypeScript con NestJS, que sigue como plan B | `ADR-015` pasa a Aceptada; `ABB-03` y `ABB-04` |
 
 ---
 

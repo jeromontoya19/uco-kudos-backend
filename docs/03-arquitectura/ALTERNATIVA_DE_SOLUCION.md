@@ -3,8 +3,9 @@
 **v0.6 · 14-nov-2026 · Jerónimo Montoya Londoño**
 
 > §1, §2, §3 y §7 cerradas con las decisiones de las rondas 8 y 9 (`D-45` a `D-52`). §4 y §5 resumen
-> las tecnologías: las ya decididas (ADR aceptados) y las propuestas (`ADR-015` a `ADR-025`), con los
-> spikes que las confirman. La §6 se llena cuando los spikes confirmen las propuestas.
+> las tecnologías: las ya decididas (ADR aceptados) y las propuestas (`ADR-015` a `ADR-025`, de las que
+> `ADR-015` y `ADR-023` ya quedaron aceptadas), con los spikes que las confirman. La §6 se llena cuando
+> los spikes confirmen las propuestas.
 > La ronda 10 (`D-53`, `D-54`) lleva la plataforma a Azure con el crédito de estudiante: cambian el
 > presupuesto, varios SBB y `SPK-04`; la alternativa elegida no cambia. El 13-nov, `SPK-04` movió la
 > API de App Service B1 a Container Apps y la región a `canadacentral` (§4, §5 y §7). El 14-nov,
@@ -188,8 +189,8 @@ spike de la §5 o la construcción.
 |---|---|---|---|---|
 | `ABB-01` Cliente móvil | React con Vite y TypeScript, como PWA | Propuesta | Vue, Angular, Svelte | `ADR-016` (el tipo de cliente, en `ADR-006`) |
 | `ABB-02` Proveedor de identidad | Auth0 o Zitadel Cloud en producción; Keycloak en local | Propuesta | Keycloak autohospedado, Supabase Auth | `ADR-018` (el patrón, en `ADR-007`) |
-| `ABB-03` Autorización por rol | La propia API, con el framework del back | Propuesta | — | `ADR-015` (la regla, en `ADR-007`) |
-| `ABB-04` API | Java 21 con Spring Boot | Propuesta | NestJS, ASP.NET Core, FastAPI | `ADR-015` (la forma, en `ADR-001` y `ADR-002`) |
+| `ABB-03` Autorización por rol | La propia API, con el framework del back | Aceptada (`D-57`) | — | `ADR-015` (la regla, en `ADR-007`) |
+| `ABB-04` API | Java 21 con Spring Boot | Aceptada (`D-57`) | NestJS, ASP.NET Core, FastAPI | `ADR-015` (la forma, en `ADR-001` y `ADR-002`) |
 | `ABB-05` Persistencia | PostgreSQL gestionado: Azure Database for PostgreSQL, servidor flexible (plan B: Neon) | Propuesta | MySQL, MongoDB; Neon, Supabase | `ADR-017` |
 | `ABB-06` Caché del muro | Caché en la memoria de la API | Aceptada (la librería, con `ADR-015`) | Redis gestionado, sin caché | `ADR-004` |
 | `ABB-07` Almacén de adjuntos | Azure Blob Storage; Azurite en local (plan B: un almacén compatible con S3, con MinIO en local) | Propuesta | Archivos en la base, disco de la instancia; R2, B2, Supabase Storage | `ADR-017` (las reglas, en `ADR-009`) |
@@ -233,7 +234,7 @@ el despliegue, y conviene saberlo hoy.
 
 | Spike | Estado | Qué falta |
 |---|---|---|
-| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`) | El despliegue del front y la parte 4: la memoria medida en Azure, el p95 del muro y el monitor |
+| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`) | El despliegue del front y el p95 del muro |
 | `SPK-01` | Respondido: el `hello_world` llegó al celular desde la página y desde una llamada HTTP a la Cloud API de Meta (v25.0), con el número de prueba. La plantilla `kudo_recibido` está en revisión | La aprobación de la plantilla y el token permanente para producción |
 | `SPK-02`, `SPK-03`, `SPK-05`, `SPK-06` | Sin empezar | Se corren al construir cada adaptador |
 

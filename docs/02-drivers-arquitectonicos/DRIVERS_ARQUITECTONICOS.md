@@ -1,6 +1,6 @@
 # UCO Kudos — Drivers arquitectónicos
 
-> **v0.9 · 14-nov-2026 · La §9 recibe su primera evidencia: `ESC-15`, cumplido para el back con los pasos 10 y 11 de `SPK-04`.** v0.8 · 13-nov-2026 · §1 a §8 cerradas con las decisiones de las rondas 1 a 7; la ronda 10 (`D-53`, `D-54`) reescribe `CN-03`, `CN-19`, `CN-22`, `ESC-07` y un trade-off de la §6.2. `CN-04` y `CN-19` anotan lo que encontró `SPK-04`. La §9 ya enlaza cada escenario con sus ADR, y falta la evidencia, que llega al construir.**
+> **v0.9 · 14-nov-2026 · La §9 recibe su primera evidencia: `ESC-15`, cumplido para el back con los pasos 10 y 11 de `SPK-04`, y `ESC-07`, en medición con el monitor del paso 14.** v0.8 · 13-nov-2026 · §1 a §8 cerradas con las decisiones de las rondas 1 a 7; la ronda 10 (`D-53`, `D-54`) reescribe `CN-03`, `CN-19`, `CN-22`, `ESC-07` y un trade-off de la §6.2. `CN-04` y `CN-19` anotan lo que encontró `SPK-04`. La §9 ya enlaza cada escenario con sus ADR, y falta la evidencia, que llega al construir.**
 > Reúne todo lo que es driver arquitectónico: funcionalidades significativas, restricciones de
 > negocio y técnicas, drivers del enunciado, atributos de calidad priorizados, preguntas de
 > caracterización y escenarios de calidad.
@@ -498,7 +498,7 @@ evidencia que demuestra la medida.
 | `ESC-04` | Confiabilidad | `ADR-001`, `ADR-003` | Pendiente |
 | `ESC-05` | Confiabilidad | `ADR-003`, `ADR-019`, `ADR-020` | Pendiente |
 | `ESC-06` | Confiabilidad | `ADR-014`, `ADR-017`, `ADR-025` | Pendiente |
-| `ESC-07` | Disponibilidad | `ADR-011`, `ADR-014`, `ADR-022` | Pendiente |
+| `ESC-07` | Disponibilidad | `ADR-011`, `ADR-014`, `ADR-022` | **En medición** (`SPK-04`, paso 14, 14-nov-2026): un monitor de UptimeRobot revisa `/actuator/health` cada 5 min, con [página pública](https://stats.uptimerobot.com/Kg3YSa2rj9); la API tiene una réplica siempre encendida (mínimo y máximo 1). El 99 % se mide en la semana de evaluación |
 | `ESC-08` | Disponibilidad | `ADR-003` | Pendiente |
 | `ESC-09` | Cumplimiento | `ADR-008` | Pendiente |
 | `ESC-10` | Cumplimiento | `ADR-008` | Pendiente |

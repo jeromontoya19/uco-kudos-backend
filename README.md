@@ -5,7 +5,7 @@
 
 > **Jerónimo Montoya Londoño**
 
-**URL pública:** _pendiente_ · **Front-End:** _enlace al repositorio_ · **Documentación:** [docs/](docs/README.md)
+**URL pública:** _pendiente_ · **API:** [ucokudos-api](https://ucokudos-api.grayriver-ab7e245b.canadacentral.azurecontainerapps.io/actuator/health) · **Disponibilidad:** [página de estado](https://stats.uptimerobot.com/Kg3YSa2rj9) · **Front-End:** _enlace al repositorio_ · **Documentación:** [docs/](docs/README.md)
 
 ---
 ### UCO Kudos

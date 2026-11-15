@@ -4,7 +4,8 @@
 
 > **Fecha:** 12-nov-2026 · **Límite de tiempo:** 3 h · **Estado:** ABIERTO. Las partes 1 y 2 y el
 > paso 9 quedaron terminados el 13-nov-2026, y los pasos 10 y 11 (despliegue desde GitHub y vuelta
-> atrás), el 14-nov-2026. Falta la parte 4: la memoria medida en Azure, el p95 del muro y el monitor
+> atrás), el 14-nov-2026, junto con la medida de memoria y arranque en Azure (paso 12) y el monitor
+> (paso 14). Falta el p95 del muro, que espera su endpoint
 > **Desbloquea:** `ADR-015`, `ADR-017` (región), `ADR-022`, `ADR-023`, `ESC-07`, `ESC-13`, `ESC-15`, `T-1`, `T-9`
 
 ## Pregunta
@@ -94,8 +95,9 @@ antes de escribir código, para pasar al plan B sin perder un día.
 | 9 · Identidad del pipeline | **Sí**, el 13-nov-2026: aplicación `github-uco-kudos-backend` en Microsoft Entra ID, con credencial federada solo para la rama `main` de `uco-kudos-backend` y el rol *Colaborador* solo sobre `rg-uco-kudos`. Se pudo registrar porque la suscripción está en el directorio de la cuenta personal del autor. Secretos creados: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` y `AZURE_SUBSCRIPTION_ID` en `uco-kudos-backend`, y `AZURE_STATIC_WEB_APPS_API_TOKEN` en `uco-kudos-frontend`. Falta probarla con el primer workflow (paso 10) | Captura de los secretos creados, sin sus valores |
 | 10 · Despliegue desde GitHub | **Sí.** El workflow `CD` corre en cada merge a `main`. Construye la imagen, la publica en GitHub Container Registry con la etiqueta del commit, entra a Azure por OIDC, la despliega en `ucokudos-api` y espera a que `/actuator/info` responda con esa versión. **Hallazgo de OIDC:** el primer intento (13-nov, PR #2) falló en `azure/login`. GitHub presentó el sujeto del token con los ID fijos del dueño y del repositorio, `repo:jeromontoya19@177062128/uco-kudos-backend@1454753573:ref:refs/heads/main`, y la credencial federada del paso 9 esperaba la forma con nombres, `repo:jeromontoya19/uco-kudos-backend:ref:refs/heads/main`. Se agregó en Azure una segunda credencial federada, `github-main-ids`, con el sujeto de los ID, y el segundo intento (14-nov) quedó en verde con la versión `39c8c8f`. Dos ajustes más: la imagen de GHCR ya era pública, así que Container Apps la descarga sin credenciales; y el script de despliegue cambia el puerto de entrada a 8080, porque la aplicación se creó con una imagen de prueba en el 80. El 14-nov, el CD desplegó la versión con PostgreSQL (`c05718c`, PR #5) en 1 min 33 s, con la salud en UP: la API ya se conecta a la base con TLS y el certificado verificado (`ADR-017`) | `docs/evidencias/despliegue/spk-04-paso-10-cd-base.png`; ejecuciones del CD [`39c8c8f`](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43521030785) (intentos 1 y 2) y [`c05718c`](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43655248919) |
 | 11 · Vuelta atrás | **Sí, en menos de 1 min** (meta ≤ 10 min, `ESC-15`). El 14-nov, el workflow `Vuelta atrás`, lanzado a mano desde `main`, redesplegó la imagen `39c8c8f` sin reconstruirla: tardó **47 s** desde el inicio hasta que la API respondió con esa versión y la salud en UP. El regreso a `c05718c` tardó **44 s**, y Flyway encontró la V1 ya aplicada. Esta ida fue segura porque la versión anterior no usa la base y la V1 solo agrega esquemas. Desde ahora, cada migración tiene que ser compatible con la imagen anterior; si no, volver atrás rompe la API | `docs/evidencias/despliegue/spk-04-paso-11-ida.png` y `spk-04-paso-11-regreso.png`; ejecuciones de la [ida](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43655692369) y del [regreso](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43655949060) |
-| 12 · Memoria y arranque del back | **En local**, con la imagen real limitada a 1 GB y conectada a PostgreSQL 16: arranca en 8,9 s, Flyway incluido, y usa unos 203 MiB. Falta medirlo en Azure, con las métricas de la réplica | — |
+| 12 · Memoria y arranque del back | **Cabe con holgura en la réplica de 1 GB** (`ADR-015`). La réplica tiene 0,5 vCPU y 1 GiB, con mínimo y máximo 1. El 14-nov, en Azure, la versión con PostgreSQL arrancó en **15,9 s**, Flyway incluido. Su memoria máxima, medida cada 5 min, quedó entre **337 y 349 MiB**, cerca de un tercio de la réplica; la versión sin base usaba unos 300 MiB. En local, con la misma imagen limitada a 1 GB, arrancó en 8,9 s y usó unos 203 MiB | Salidas de `az containerapp show` (escala y recursos), `az containerapp logs show` («Started UcoKudosApplication in 15.941 seconds») y `az monitor metrics list` (`WorkingSetBytes`, máximo cada 5 min durante 3 h) |
 | 13 · p95 del muro con 50 simultáneos | | |
+| 14 · Monitor de disponibilidad | **Sí**, creado el 14-nov en UptimeRobot (capa gratuita, fuera de Azure). Es un monitor HTTP(s) sobre `/actuator/health`, cada 5 min, con aviso por correo. Esa salud incluye la conexión con la base, así que el monitor marca la API como caída si falla la API o falla la base (responde 503). Quedó en verde desde la primera comprobación, y tiene una página pública de estado: [stats.uptimerobot.com/Kg3YSa2rj9](https://stats.uptimerobot.com/Kg3YSa2rj9). El 99 % de `ESC-07` se mide durante la semana de evaluación | `docs/evidencias/despliegue/spk-04-paso-14-uptimerobot.png` |
 
 **Respuesta parcial (13-nov-2026, partes 1 y 2):** **sí se puede montar UCO Kudos en Azure for
 Students**, con dos cambios frente a la pregunta original:
@@ -111,14 +113,15 @@ sin ninguna contraseña de Azure guardada, y **vuelve a la imagen anterior en me
 se cumple `ESC-15` para el back: el despliegue sale del merge sin pasos manuales y queda verificado en
 menos de 2 min (la meta es ≤ 15 min), y la vuelta atrás tarda 47 s (la meta es ≤ 10 min).
 
-**Qué decide:** → `ADR-022`, `ADR-023`; `ADR-015` (memoria); `ADR-017` (región)
+**Qué decide:** → `ADR-022`, `ADR-023` (aceptada, `D-56`); `ADR-015` (memoria; aceptada, `D-57`);
+`ADR-017` (región)
 
 **Lo que queda abierto:**
 1. **El front:** desplegarlo en Static Web Apps desde `uco-kudos-frontend`. Hasta entonces `ADR-022`
    sigue en Propuesta. `ADR-023` ya quedó aceptada (`D-56`), con el primer pipeline en verde y
    GitHub Actions entrando a Azure.
-2. **Parte 4:** la memoria y el arranque medidos en Azure, el p95 del muro (cuando exista su endpoint)
-   y el monitor de UptimeRobot.
+2. **Parte 4:** el p95 del muro, cuando exista su endpoint. La memoria y el arranque en Azure
+   (paso 12) y el monitor de UptimeRobot (paso 14) ya están.
 3. **Costos:** confirmar en *Cost Management* si la base quedó dentro de la capa gratuita de 12 meses
    y cuánto cobra la réplica de Container Apps en reposo.
 4. **Ley 1581:** la duda sobre Canadá del paso 2.

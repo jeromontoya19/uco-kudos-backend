@@ -34,7 +34,7 @@ observaciones.
 
 | ID | Título | Estado | Propuesta (resumen) | La confirma |
 |---|---|---|---|---|
-| [`ADR-015`](ADR-015-lenguaje-y-framework-del-back.md) | Back | Propuesta | Java 21 con Spring Boot; plan B: NestJS | `SPK-04` |
+| [`ADR-015`](ADR-015-lenguaje-y-framework-del-back.md) | Back | **Aceptada** el 14-nov (`D-57`) | Java 21 con Spring Boot; plan B: NestJS | Confirmada: `SPK-04`, paso 12 (unos 345 MiB de 1 GiB y 16 s de arranque) |
 | [`ADR-016`](ADR-016-framework-del-front.md) | Front | Propuesta | React con Vite y TypeScript; plan B: Vue | Esqueleto desplegado |
 | [`ADR-017`](ADR-017-base-de-datos-y-archivos.md) | Base de datos y archivos | Propuesta | PostgreSQL en Azure (servidor flexible) y Azure Blob Storage, con Azurite en local; plan B: Neon y un almacén compatible con S3 | `SPK-06` |
 | [`ADR-018`](ADR-018-proveedor-de-identidad.md) | Proveedor de identidad | Propuesta | Auth0 o Zitadel Cloud en producción; Keycloak en local | `SPK-05` |
