@@ -39,4 +39,20 @@ class MigracionesIT {
 		assertThat(esquemas).containsAll(ReglasDeArquitecturaTest.MODULOS);
 	}
 
+	@Test
+	void estan_las_15_categorias_del_enunciado_activas() {
+		assertThat(jdbc.sql("SELECT count(*) FROM kudos.categoria WHERE activa").query(Long.class).single())
+			.isEqualTo(15);
+	}
+
+	@Test
+	void hay_una_persona_de_prueba_activa_por_cada_rol() {
+		List<String> roles = jdbc.sql("SELECT rol FROM identidad.persona WHERE activa ORDER BY rol")
+			.query(String.class)
+			.list();
+
+		assertThat(roles).containsExactlyInAnyOrder("ADMINISTRADOR", "RECTOR", "COORDINADOR_ACADEMICO",
+				"COORDINADOR_FACULTAD", "COORDINADOR_PROGRAMA", "DOCENTE", "ESTUDIANTE");
+	}
+
 }
