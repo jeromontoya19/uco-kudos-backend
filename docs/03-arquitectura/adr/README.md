@@ -35,13 +35,13 @@ observaciones.
 | ID | Título | Estado | Propuesta (resumen) | La confirma |
 |---|---|---|---|---|
 | [`ADR-015`](ADR-015-lenguaje-y-framework-del-back.md) | Back | **Aceptada** el 14-nov (`D-57`) | Java 21 con Spring Boot; plan B: NestJS | Confirmada: `SPK-04`, paso 12 (unos 345 MiB de 1 GiB y 16 s de arranque) |
-| [`ADR-016`](ADR-016-framework-del-front.md) | Front | Propuesta | React con Vite y TypeScript; plan B: Vue | Esqueleto desplegado |
+| [`ADR-016`](ADR-016-framework-del-front.md) | Front | **Aceptada** el 14-nov (`D-58`) | React con Vite y TypeScript; plan B: Vue | Confirmada: esqueleto desplegado como PWA instalable |
 | [`ADR-017`](ADR-017-base-de-datos-y-archivos.md) | Base de datos y archivos | Propuesta | PostgreSQL en Azure (servidor flexible) y Azure Blob Storage, con Azurite en local; plan B: Neon y un almacén compatible con S3 | `SPK-06` |
 | [`ADR-018`](ADR-018-proveedor-de-identidad.md) | Proveedor de identidad | Propuesta | Auth0 o Zitadel Cloud en producción; Keycloak en local | `SPK-05` |
 | [`ADR-019`](ADR-019-proveedor-de-correo.md) | Correo | Propuesta | API HTTP de Resend o Brevo; Mailpit en local; plan B: Azure Communication Services Email | `SPK-02` |
 | [`ADR-020`](ADR-020-proveedor-de-whatsapp.md) | WhatsApp | Propuesta | WhatsApp Cloud API de Meta; plan B: Twilio Sandbox | `SPK-01` |
 | [`ADR-021`](ADR-021-canal-en-vivo.md) | Canal en vivo | Propuesta | Server-Sent Events; plan B: WebSocket | `SPK-03` |
-| [`ADR-022`](ADR-022-despliegue-y-monitor.md) | Despliegue y monitor | Propuesta | Back en Azure Container Apps (`canadacentral`, una réplica siempre encendida), front en Azure Static Web Apps, monitor UptimeRobot; plan B: Render y Vercel | `SPK-04` |
+| [`ADR-022`](ADR-022-despliegue-y-monitor.md) | Despliegue y monitor | **Aceptada** el 14-nov (`D-59`) | Back en Azure Container Apps (`canadacentral`, una réplica siempre encendida), front en Azure Static Web Apps, monitor UptimeRobot; plan B: Render y Vercel | Confirmada: `SPK-04`, partes 1 a 3 y pasos 12 y 14 (falta el p95 del muro, como evidencia de `ESC-13`) |
 | [`ADR-023`](ADR-023-ci-cd-y-analisis.md) | CI/CD y análisis | **Aceptada** el 14-nov (`D-56`) | GitHub Actions, SonarQube Cloud, GitHub Container Registry y Trivy; CD hacia Azure por OIDC | Confirmada: primer pipeline en verde y `SPK-04`, pasos 10 y 11 |
 | [`ADR-024`](ADR-024-observabilidad.md) | Observabilidad | Propuesta | OpenTelemetry hacia Application Insights; Grafana en local; plan B: Grafana Cloud | La API instrumentada en producción |
 | [`ADR-025`](ADR-025-copias-de-seguridad.md) | Copias de seguridad | Propuesta | Tarea diaria en GitHub Actions hacia un segundo proveedor | `SPK-06` |

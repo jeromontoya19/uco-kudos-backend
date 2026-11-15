@@ -97,5 +97,6 @@ cambio con cualquier vulnerabilidad CRÍTICA o ALTA que ya tenga corrección (ve
 - **Vuelta atrás:** el workflow manual, lanzado desde `main`, tardó 47 s, y el regreso, 44 s
   (`SPK-04`, paso 11; `ESC-15`).
 
-Con esto se cumplió lo que confirmaba este ADR, que el autor aceptó el 14-nov-2026 (`D-56`). El
-despliegue del front con la acción de Static Web Apps se comprueba con su esqueleto.
+Con esto se cumplió lo que confirmaba este ADR, que el autor aceptó el 14-nov-2026 (`D-56`). Ese
+mismo día quedó comprobado también el front: su CI completa pasó, y su CD lo desplegó con la acción de
+Static Web Apps en 57 s (`SPK-04`, paso 10).
