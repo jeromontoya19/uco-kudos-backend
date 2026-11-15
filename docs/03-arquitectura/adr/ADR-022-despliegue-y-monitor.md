@@ -84,7 +84,8 @@ costo se vigila con la alerta de presupuesto.
 
 **Volver atrás (`ESC-15`):** cada despliegue crea una revisión nueva. Volver atrás es desplegar la
 etiqueta de la imagen anterior, o activar la revisión anterior, sin reconstruir nada (`ADR-023`).
-`SPK-04` mide que tome ≤ 10 min.
+`SPK-04` mide que tome ≤ 10 min. `[:W:]` 14-nov-2026: tomó 47 s, y el regreso, 44 s (`SPK-04`,
+paso 11).
 
 **Costo estimado** (se confirma en la calculadora de Azure y en `SPK-04`):
 
@@ -137,18 +138,19 @@ UptimeRobot, todo en capas gratuitas (`D-07`). Con `D-53` pasó a ser el plan B.
 tiene cuota 0 de máquinas B1. El back pasó de App Service B1 a Container Apps, y la región de la API,
 la base y los archivos pasó a `canadacentral`.
 
-**Estado de los recursos al 13-nov-2026** (grupo `rg-uco-kudos`):
+**Estado de los recursos al 14-nov-2026** (grupo `rg-uco-kudos`):
 
 | Recurso | Servicio | Región | Estado |
 |---|---|---|---|
-| `ucokudos-api` | Container Apps, en el entorno `env-uco-kudos` | `canadacentral` | Responde en internet con una imagen de prueba; falta la imagen del back |
-| `ucokudos-db-4632` | PostgreSQL, servidor flexible B1ms | `canadacentral` | Creado y vacío |
+| `ucokudos-api` | Container Apps, en el entorno `env-uco-kudos` | `canadacentral` | Corre el back real, desplegado por el CD desde GitHub Container Registry (versión `c05718c`), con la salud en UP. Recibe la conexión a la base por variables, y la contraseña, como el secreto `bd-contrasena` |
+| `ucokudos-db-4632` | PostgreSQL, servidor flexible B1ms | `canadacentral` | Base `ucokudos`, con un esquema por módulo que crea Flyway (`ADR-017`). Solo acepta TLS, y el firewall solo deja entrar a los servicios de Azure |
 | `ucokudos4632` | Cuenta de almacenamiento con el contenedor privado `adjuntos` | `canadacentral` | Creado y vacío |
 | `workspace-rgucokudos…` | Log Analytics, que creó el entorno de Container Apps | `canadacentral` | Recibe los registros del entorno |
 | `ucokudos-web` | Static Web Apps, plan Free | `westus2` | Creado vacío, sin conexión con GitHub; muestra la página de bienvenida de Azure |
 | Presupuesto | *Cost Management* | — | Creado, con avisos al correo personal |
 
-`ADR-022` sigue en Propuesta hasta que GitHub Actions despliegue en Container Apps y en Static Web Apps
-y se pruebe la vuelta atrás (pasos 10 y 11 de `SPK-04`). La identidad del pipeline (paso 9) ya existe:
-la aplicación `github-uco-kudos-backend`, con permiso solo sobre `rg-uco-kudos`, y los secretos en
-los dos repositorios.
+`ADR-022` sigue en Propuesta hasta que GitHub Actions despliegue también el front en Static Web Apps.
+La parte del back ya está probada (`SPK-04`, 14-nov-2026): el CD despliega en Container Apps por OIDC,
+con la identidad `github-uco-kudos-backend` y permiso solo sobre `rg-uco-kudos` (paso 10), y volver a
+la imagen anterior tarda menos de 1 min (paso 11). Quedan además la memoria medida en Azure, el p95 del
+muro y el monitor (parte 4).

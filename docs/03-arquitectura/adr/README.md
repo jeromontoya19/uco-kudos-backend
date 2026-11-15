@@ -30,7 +30,7 @@ observaciones.
 | [`ADR-013`](ADR-013-ramas-y-repositorios.md) | Repositorios y ramas | Aceptada | Dos repositorios; `main`, `documentacion-desarrollo`, `codigo-desarrollo` y `codigo-testing`, con compuertas de CI |
 | [`ADR-014`](ADR-014-disponibilidad-y-recuperacion.md) | Disponibilidad y recuperación | Aceptada | Instancia siempre encendida y monitor externo con meta del 99 %; copia diaria fuera del proveedor, ≤ 24 h de pérdida y ≤ 4 h de recuperación |
 
-## Propuestas: tecnología
+## Tecnología: propuestas y las ya aceptadas
 
 | ID | Título | Estado | Propuesta (resumen) | La confirma |
 |---|---|---|---|---|
@@ -42,6 +42,6 @@ observaciones.
 | [`ADR-020`](ADR-020-proveedor-de-whatsapp.md) | WhatsApp | Propuesta | WhatsApp Cloud API de Meta; plan B: Twilio Sandbox | `SPK-01` |
 | [`ADR-021`](ADR-021-canal-en-vivo.md) | Canal en vivo | Propuesta | Server-Sent Events; plan B: WebSocket | `SPK-03` |
 | [`ADR-022`](ADR-022-despliegue-y-monitor.md) | Despliegue y monitor | Propuesta | Back en Azure Container Apps (`canadacentral`, una réplica siempre encendida), front en Azure Static Web Apps, monitor UptimeRobot; plan B: Render y Vercel | `SPK-04` |
-| [`ADR-023`](ADR-023-ci-cd-y-analisis.md) | CI/CD y análisis | Propuesta | GitHub Actions, SonarQube Cloud, GitHub Container Registry y Trivy; CD hacia Azure por OIDC | Primer pipeline en verde; `SPK-04` |
+| [`ADR-023`](ADR-023-ci-cd-y-analisis.md) | CI/CD y análisis | **Aceptada** el 14-nov (`D-56`) | GitHub Actions, SonarQube Cloud, GitHub Container Registry y Trivy; CD hacia Azure por OIDC | Confirmada: primer pipeline en verde y `SPK-04`, pasos 10 y 11 |
 | [`ADR-024`](ADR-024-observabilidad.md) | Observabilidad | Propuesta | OpenTelemetry hacia Application Insights; Grafana en local; plan B: Grafana Cloud | La API instrumentada en producción |
 | [`ADR-025`](ADR-025-copias-de-seguridad.md) | Copias de seguridad | Propuesta | Tarea diaria en GitHub Actions hacia un segundo proveedor | `SPK-06` |

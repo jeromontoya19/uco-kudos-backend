@@ -1,6 +1,6 @@
 # UCO Kudos — Drivers arquitectónicos
 
-> **v0.8 · 13-nov-2026 · §1 a §8 cerradas con las decisiones de las rondas 1 a 7; la ronda 10 (`D-53`, `D-54`) reescribe `CN-03`, `CN-19`, `CN-22`, `ESC-07` y un trade-off de la §6.2. `CN-04` y `CN-19` anotan lo que encontró `SPK-04`. La §9 ya enlaza cada escenario con sus ADR, y falta la evidencia, que llega al construir.**
+> **v0.9 · 14-nov-2026 · La §9 recibe su primera evidencia: `ESC-15`, cumplido para el back con los pasos 10 y 11 de `SPK-04`.** v0.8 · 13-nov-2026 · §1 a §8 cerradas con las decisiones de las rondas 1 a 7; la ronda 10 (`D-53`, `D-54`) reescribe `CN-03`, `CN-19`, `CN-22`, `ESC-07` y un trade-off de la §6.2. `CN-04` y `CN-19` anotan lo que encontró `SPK-04`. La §9 ya enlaza cada escenario con sus ADR, y falta la evidencia, que llega al construir.**
 > Reúne todo lo que es driver arquitectónico: funcionalidades significativas, restricciones de
 > negocio y técnicas, drivers del enunciado, atributos de calidad priorizados, preguntas de
 > caracterización y escenarios de calidad.
@@ -506,5 +506,5 @@ evidencia que demuestra la medida.
 | `ESC-12` | Capacidad para ser Soportado | `ADR-024` | Pendiente |
 | `ESC-13` | Rendimiento | `ADR-004`, `ADR-011`, `ADR-022` | Pendiente |
 | `ESC-14` | Rendimiento | `ADR-003`, `ADR-021` | Pendiente |
-| `ESC-15` | Desplegabilidad | `ADR-013`, `ADR-022`, `ADR-023` | Pendiente |
+| `ESC-15` | Desplegabilidad | `ADR-013`, `ADR-022`, `ADR-023` | **Cumplido para el back** (`SPK-04`, pasos 10 y 11, 14-nov-2026): el CD despliega y verifica en menos de 2 min desde el merge, sin pasos manuales; la vuelta atrás tardó 47 s, y el regreso, 44 s. Falta el front |
 | `ESC-16` | Experiencia de usuario | `ADR-006`, `ADR-016` | Pendiente |

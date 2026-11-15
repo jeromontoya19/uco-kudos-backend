@@ -1,6 +1,6 @@
 # UCO Kudos — Decisiones del autor
 
-> **v1.6 · 13-nov-2026 · Rondas 1 a 10, con el resultado de `SPK-04` sobre la ronda 10.**
+> **v1.7 · 14-nov-2026 · Rondas 1 a 11, con el resultado de `SPK-04` sobre la ronda 10.**
 > Lo que el enunciado no dice y hubo que decidir para escribir los drivers arquitectónicos. Cada
 > decisión lleva un identificador `D-nn`, que los demás documentos citan como origen.
 > Manda sobre esto: el enunciado y lo que diga el docente.
@@ -180,6 +180,17 @@ decisión:
 
 Ninguno de los dos cambios toca lo que `D-54` mantiene (estilo, outbox, caché en memoria, borde e
 instancia única), y no se activó el plan B de `D-53`.
+
+---
+
+## 11 · Ronda 11 · 14-nov-2026 · Construcción del back
+
+Lo que hubo que decidir al conectar la base de datos y al cerrar los pasos 10 y 11 de `SPK-04`.
+
+| ID | Pregunta | Decisión | Se descartó | Qué mueve |
+|---|---|---|---|---|
+| `D-55` | ¿Cómo se separan en la base los datos de cada módulo? | **Un esquema de PostgreSQL por módulo: `kudos`, `avisos`, `identidad`, `auditoria` y `moderacion`. Cada módulo guarda sus tablas en el suyo, y los esquemas los crea la primera migración de Flyway** | Todo en el esquema `public`: más simple, pero la frontera entre módulos no se ve en la base | `ADR-002`, `ADR-017` |
+| `D-56` | ¿Se acepta la CI/CD propuesta en `ADR-023`? | **Sí: GitHub Actions, SonarQube Cloud, GitHub Container Registry y Trivy, con el CD hacia Azure por OIDC. La confirmaron el primer pipeline en verde y los pasos 10 y 11 de `SPK-04` (14-nov-2026). El despliegue del front con la acción de Static Web Apps se comprueba con su esqueleto, sin reabrir la decisión** | Dejarla en Propuesta hasta desplegar el front | `ADR-023` pasa a Aceptada; `ABB-19` y la parte de CI/CD de `ABB-20`; `ESC-15` |
 
 ---
 

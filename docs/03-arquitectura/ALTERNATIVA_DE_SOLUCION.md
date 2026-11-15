@@ -1,13 +1,14 @@
 # UCO Kudos — Alternativa de solución, bloques de construcción y spikes
 
-**v0.5 · 13-nov-2026 · Jerónimo Montoya Londoño**
+**v0.6 · 14-nov-2026 · Jerónimo Montoya Londoño**
 
 > §1, §2, §3 y §7 cerradas con las decisiones de las rondas 8 y 9 (`D-45` a `D-52`). §4 y §5 resumen
 > las tecnologías: las ya decididas (ADR aceptados) y las propuestas (`ADR-015` a `ADR-025`), con los
 > spikes que las confirman. La §6 se llena cuando los spikes confirmen las propuestas.
 > La ronda 10 (`D-53`, `D-54`) lleva la plataforma a Azure con el crédito de estudiante: cambian el
 > presupuesto, varios SBB y `SPK-04`; la alternativa elegida no cambia. El 13-nov, `SPK-04` movió la
-> API de App Service B1 a Container Apps y la región a `canadacentral` (§4, §5 y §7).
+> API de App Service B1 a Container Apps y la región a `canadacentral` (§4, §5 y §7). El 14-nov,
+> `SPK-04` probó el despliegue desde GitHub por OIDC y la vuelta atrás (§5 y §7).
 
 Propone **una** alternativa de solución, la compara con las otras, declara los **bloques de
 construcción** (ABB) y la tecnología que los materializa (SBB), y lista los **spikes** que deben
@@ -203,8 +204,8 @@ spike de la §5 o la construcción.
 | `ABB-16` Copias de seguridad | Tarea diaria en GitHub Actions hacia otro proveedor | Propuesta | Copias del proveedor, copia manual | `ADR-025` (la meta, en `ADR-014`) |
 | `ABB-17` Configuración y secretos | Variables de entorno; secretos en GitHub y en los secretos de Container Apps (Key Vault si sobra tiempo) | Propuesta | — | `ADR-022`, `ADR-023` |
 | `ABB-18` Borde de la API | HTTPS de la plataforma; CORS, validación y límite de peticiones en la API; Nginx con ModSecurity solo en local | Aceptada | WAF gratuito delante | `ADR-010` |
-| `ABB-19` Integración continua | GitHub Actions, SonarQube Cloud y Trivy | Propuesta | GitLab CI, CircleCI | `ADR-023` |
-| `ABB-20` Despliegue continuo | GitHub Actions y GitHub Container Registry, hacia Azure Container Apps y Azure Static Web Apps (plan B: Render y Vercel) | Propuesta | Docker Hub, Azure Container Registry; Azure App Service B1 (cuota 0 en la suscripción), Koyeb, Cloud Run | `ADR-023`, `ADR-022` |
+| `ABB-19` Integración continua | GitHub Actions, SonarQube Cloud y Trivy | Aceptada (`D-56`) | GitLab CI, CircleCI | `ADR-023` |
+| `ABB-20` Despliegue continuo | GitHub Actions y GitHub Container Registry, hacia Azure Container Apps y Azure Static Web Apps (plan B: Render y Vercel) | Aceptada la CI/CD (`D-56`); la plataforma sigue en Propuesta (`ADR-022`) | Docker Hub, Azure Container Registry; Azure App Service B1 (cuota 0 en la suscripción), Koyeb, Cloud Run | `ADR-023`, `ADR-022` |
 | `ABB-21` Entorno local | Docker Compose con dobles de los servicios externos | Aceptada | Solo en la nube | `ADR-012` |
 
 ---
@@ -228,11 +229,11 @@ plantilla de esa carpeta.
 `SPK-04` va en paralelo: la activación de la suscripción y las regiones permitidas pueden bloquear todo
 el despliegue, y conviene saberlo hoy.
 
-**Estado al 13-nov-2026:**
+**Estado al 14-nov-2026:**
 
 | Spike | Estado | Qué falta |
 |---|---|---|
-| `SPK-04` | Partes 1 y 2 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. La API de prueba responde desde el celular. De la parte 3, el paso 9: la identidad del pipeline y los secretos en los dos repositorios | Primer despliegue desde GitHub, vuelta atrás y las medidas con el back real |
+| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`) | El despliegue del front y la parte 4: la memoria medida en Azure, el p95 del muro y el monitor |
 | `SPK-01` | Respondido: el `hello_world` llegó al celular desde la página y desde una llamada HTTP a la Cloud API de Meta (v25.0), con el número de prueba. La plantilla `kudo_recibido` está en revisión | La aprobación de la plantilla y el token permanente para producción |
 | `SPK-02`, `SPK-03`, `SPK-05`, `SPK-06` | Sin empezar | Se corren al construir cada adaptador |
 
@@ -254,7 +255,7 @@ NO CUMPLE (se dice por qué y cuándo se reabre) · EN CONFLICTO (choca con otra
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|
 | La réplica de 0,5 vCPU y 1 GB no aguanta los 50 simultáneos de `ESC-13` | Baja | Alto | Medirlo en el spike de despliegue y ajustar la cifra de `D-39` con datos; si hace falta, subir a 1 vCPU y 2 GB |
-| La suscripción de estudiante no deja crear los servicios en una región común, o GitHub Actions no puede autenticarse en Azure (`CN-19`) | Media | Alto: no hay despliegue | `SPK-04` con límite de 3 h; si falla, plan B con Render y Vercel (`D-53`). **Pasó en parte:** PostgreSQL estaba restringido en `westus2` y la cuota de B1 era 0; se resolvió con `canadacentral` y Container Apps |
+| La suscripción de estudiante no deja crear los servicios en una región común, o GitHub Actions no puede autenticarse en Azure (`CN-19`) | Media | Alto: no hay despliegue | `SPK-04` con límite de 3 h; si falla, plan B con Render y Vercel (`D-53`). **Pasó en parte:** PostgreSQL estaba restringido en `westus2` y la cuota de B1 era 0; se resolvió con `canadacentral` y Container Apps. GitHub Actions sí entra a Azure por OIDC, con una segunda credencial federada para el sujeto con ID fijos (14-nov) |
 | El crédito se agota antes o durante la evaluación (`T-9`) | Baja | Alto: la URL deja de responder | Meta de 30 USD al mes, alerta de presupuesto (creada el 13-nov) y revisar el saldo antes de sustentar |
 | La réplica de Container Apps siempre encendida cuesta más de lo estimado (`ADR-022`) | Media | Medio: se gasta el crédito más rápido | La alerta de presupuesto; revisar *Cost Management* a diario durante la semana de evaluación, y después bajar la réplica mínima a 0 |
 | La SIC no considera a Canadá un país con nivel adecuado de protección (`CN-04`) | Baja | Medio: los datos reales no podrían quedar en `canadacentral` | La demo usa datos de prueba. Si se confirma el problema, la base y los archivos se pasan a otra región permitida |

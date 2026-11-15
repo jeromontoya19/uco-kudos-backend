@@ -102,3 +102,20 @@ confirman en `SPK-04` y `SPK-06`; este ADR no los da por ciertos.
 `[:W:]` 12-nov-2026: la propuesta anterior era PostgreSQL en Neon o Supabase y un almacén compatible
 con S3 (R2, B2 o Supabase Storage) con MinIO en local. Con `D-54` pasó a Azure, y lo anterior quedó
 como plan B.
+
+`[:W:]` 14-nov-2026: así quedó conectada la base, y así la usa la API desplegada (`SPK-04`, paso 10):
+- **Acceso a datos con Spring Data JDBC, no JPA.** Los repositorios guardan y leen agregados
+  completos, sin carga perezosa ni caché de sesión, y arranca con menos memoria que JPA (`ADR-015`).
+  El esquema lo crean solo las migraciones de Flyway, al arrancar la API.
+- **Un esquema por módulo** (`D-55`): `kudos`, `avisos`, `identidad`, `auditoria` y `moderacion`, que
+  crea la primera migración. La frontera entre módulos de `ADR-002` también se ve en la base.
+- **Conexión cifrada y verificada.** El servidor exige TLS (`require_secure_transport` en `on`), y la
+  API verifica su certificado y su nombre (`sslmode=verify-full`) contra las raíces de la JVM. La
+  cadena del servidor termina en DigiCert Global Root G2, que trae el JRE de la imagen.
+- **Configuración por variables de entorno:** `BD_URL`, `BD_USUARIO` y `BD_CONTRASENA`. En Container
+  Apps, la contraseña es el secreto `bd-contrasena`, y la base de la aplicación es `ucokudos`.
+- **Pruebas de integración** contra PostgreSQL 16 en Testcontainers, la misma versión mayor de
+  Azure.
+
+`[!]` La API entra con el usuario administrador del servidor. Falta un rol propio, con permiso solo
+sobre los esquemas de la aplicación.

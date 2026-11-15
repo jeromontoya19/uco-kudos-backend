@@ -2,9 +2,9 @@
 
 > **Borrador:** preparado con IA a partir de `ADR-022`. Los pasos son una guía; los resultados los llena el autor al correr el spike. Borra esta nota cuando el documento sea tuyo.
 
-> **Fecha:** 12-nov-2026 · **Límite de tiempo:** 3 h · **Estado:** ABIERTO. El 13-nov-2026 quedaron
-> terminadas las partes 1 y 2 y el paso 9 de la parte 3. Faltan los pasos 10 y 11 (despliegue desde
-> GitHub y vuelta atrás) y la parte 4, que esperan el esqueleto del back
+> **Fecha:** 12-nov-2026 · **Límite de tiempo:** 3 h · **Estado:** ABIERTO. Las partes 1 y 2 y el
+> paso 9 quedaron terminados el 13-nov-2026, y los pasos 10 y 11 (despliegue desde GitHub y vuelta
+> atrás), el 14-nov-2026. Falta la parte 4: la memoria medida en Azure, el p95 del muro y el monitor
 > **Desbloquea:** `ADR-015`, `ADR-017` (región), `ADR-022`, `ADR-023`, `ESC-07`, `ESC-13`, `ESC-15`, `T-1`, `T-9`
 
 ## Pregunta
@@ -92,9 +92,9 @@ antes de escribir código, para pasar al plan B sin perder un día.
 | 3 · Alerta de presupuesto | **Sí**, creada el 13-nov-2026: la meta de 30 USD al mes de `D-53`, con avisos al correo personal del autor | `docs/evidencias/despliegue/spk-04-presupuesto.png` |
 | 5 a 8 · Recursos creados | Antes de crear nada hubo que registrar los proveedores de recursos (`MissingSubscriptionRegistration`). **Base:** `ucokudos-db-4632`, B1ms, en `canadacentral`. **Archivos:** cuenta `ucokudos4632` en `canadacentral`, con el contenedor privado `adjuntos` (su comando no dio error). **API:** el plan App Service B1 **no se pudo crear**, porque la suscripción tiene cuota 0 de máquinas B1 («Operation cannot be completed without additional quota»). Se pasó a **Azure Container Apps**, la segunda opción de `ADR-022`: entorno `env-uco-kudos` y aplicación `ucokudos-api` en `canadacentral`, con 0,5 vCPU, 1 GB y una réplica siempre encendida, y una imagen de prueba publicada en `*.canadacentral.azurecontainerapps.io`. La URL pública abre desde el celular (`spk-04-api-celular.png`). El entorno creó solo su espacio de Log Analytics. **Front:** Static Web Apps `ucokudos-web`, plan Free, en `westus2`. Se creó **vacío y sin conectar a GitHub**: por ahora solo muestra la página de bienvenida de Azure. El front se publica desde el workflow de `uco-kudos-frontend`, con el token de despliegue guardado como secreto `AZURE_STATIC_WEB_APPS_API_TOKEN` | `docs/evidencias/despliegue/spk-04-recursos.png` (la tabla de `az resource list`) |
 | 9 · Identidad del pipeline | **Sí**, el 13-nov-2026: aplicación `github-uco-kudos-backend` en Microsoft Entra ID, con credencial federada solo para la rama `main` de `uco-kudos-backend` y el rol *Colaborador* solo sobre `rg-uco-kudos`. Se pudo registrar porque la suscripción está en el directorio de la cuenta personal del autor. Secretos creados: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` y `AZURE_SUBSCRIPTION_ID` en `uco-kudos-backend`, y `AZURE_STATIC_WEB_APPS_API_TOKEN` en `uco-kudos-frontend`. Falta probarla con el primer workflow (paso 10) | Captura de los secretos creados, sin sus valores |
-| 10 · Despliegue desde GitHub | | Enlace a la ejecución del workflow |
-| 11 · Vuelta atrás | ¿Cuántos minutos? | Enlace a la ejecución del workflow |
-| 12 · Memoria y arranque del back | | |
+| 10 · Despliegue desde GitHub | **Sí.** El workflow `CD` corre en cada merge a `main`. Construye la imagen, la publica en GitHub Container Registry con la etiqueta del commit, entra a Azure por OIDC, la despliega en `ucokudos-api` y espera a que `/actuator/info` responda con esa versión. **Hallazgo de OIDC:** el primer intento (13-nov, PR #2) falló en `azure/login`. GitHub presentó el sujeto del token con los ID fijos del dueño y del repositorio, `repo:jeromontoya19@177062128/uco-kudos-backend@1454753573:ref:refs/heads/main`, y la credencial federada del paso 9 esperaba la forma con nombres, `repo:jeromontoya19/uco-kudos-backend:ref:refs/heads/main`. Se agregó en Azure una segunda credencial federada, `github-main-ids`, con el sujeto de los ID, y el segundo intento (14-nov) quedó en verde con la versión `39c8c8f`. Dos ajustes más: la imagen de GHCR ya era pública, así que Container Apps la descarga sin credenciales; y el script de despliegue cambia el puerto de entrada a 8080, porque la aplicación se creó con una imagen de prueba en el 80. El 14-nov, el CD desplegó la versión con PostgreSQL (`c05718c`, PR #5) en 1 min 33 s, con la salud en UP: la API ya se conecta a la base con TLS y el certificado verificado (`ADR-017`) | `docs/evidencias/despliegue/spk-04-paso-10-cd-base.png`; ejecuciones del CD [`39c8c8f`](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43521030785) (intentos 1 y 2) y [`c05718c`](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43655248919) |
+| 11 · Vuelta atrás | **Sí, en menos de 1 min** (meta ≤ 10 min, `ESC-15`). El 14-nov, el workflow `Vuelta atrás`, lanzado a mano desde `main`, redesplegó la imagen `39c8c8f` sin reconstruirla: tardó **47 s** desde el inicio hasta que la API respondió con esa versión y la salud en UP. El regreso a `c05718c` tardó **44 s**, y Flyway encontró la V1 ya aplicada. Esta ida fue segura porque la versión anterior no usa la base y la V1 solo agrega esquemas. Desde ahora, cada migración tiene que ser compatible con la imagen anterior; si no, volver atrás rompe la API | `docs/evidencias/despliegue/spk-04-paso-11-ida.png` y `spk-04-paso-11-regreso.png`; ejecuciones de la [ida](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43655692369) y del [regreso](https://github.com/jeromontoya19/uco-kudos-backend/actions/runs/43655949060) |
+| 12 · Memoria y arranque del back | **En local**, con la imagen real limitada a 1 GB y conectada a PostgreSQL 16: arranca en 8,9 s, Flyway incluido, y usa unos 203 MiB. Falta medirlo en Azure, con las métricas de la réplica | — |
 | 13 · p95 del muro con 50 simultáneos | | |
 
 **Respuesta parcial (13-nov-2026, partes 1 y 2):** **sí se puede montar UCO Kudos en Azure for
@@ -106,14 +106,21 @@ Students**, con dos cambios frente a la pregunta original:
 El front queda en `westus2`, que para Static Web Apps es solo la región de administración. Ningún
 criterio de muerte se ha cumplido, así que el plan B (Render y Vercel) sigue sin usarse.
 
+**Respuesta (14-nov-2026, parte 3):** **GitHub Actions despliega el back en Container Apps por OIDC**,
+sin ninguna contraseña de Azure guardada, y **vuelve a la imagen anterior en menos de 1 min**. Con eso
+se cumple `ESC-15` para el back: el despliegue sale del merge sin pasos manuales y queda verificado en
+menos de 2 min (la meta es ≤ 15 min), y la vuelta atrás tarda 47 s (la meta es ≤ 10 min).
+
 **Qué decide:** → `ADR-022`, `ADR-023`; `ADR-015` (memoria); `ADR-017` (región)
 
 **Lo que queda abierto:**
-1. **Pasos 10 y 11:** el primer despliegue desde GitHub, que también prueba la identidad del paso 9,
-   y la vuelta atrás. Hasta que pasen, `ADR-022` y `ADR-023` siguen en Propuesta.
-2. **Parte 4:** memoria y arranque del back real y el p95 del muro. Llega con el esqueleto del back.
+1. **El front:** desplegarlo en Static Web Apps desde `uco-kudos-frontend`. Hasta entonces `ADR-022`
+   sigue en Propuesta. `ADR-023` ya quedó aceptada (`D-56`), con el primer pipeline en verde y
+   GitHub Actions entrando a Azure.
+2. **Parte 4:** la memoria y el arranque medidos en Azure, el p95 del muro (cuando exista su endpoint)
+   y el monitor de UptimeRobot.
 3. **Costos:** confirmar en *Cost Management* si la base quedó dentro de la capa gratuita de 12 meses
    y cuánto cobra la réplica de Container Apps en reposo.
 4. **Ley 1581:** la duda sobre Canadá del paso 2.
-5. **Evidencias:** guardar las capturas de los pasos 1, 2, 3 y 5 a 8 (con el correo recortado). La del
-   celular ya está.
+5. **Evidencias:** faltan las capturas de los pasos 1, 2, 3, 5 a 8 y 9 (con el correo recortado). Las
+   del celular y de los pasos 10 y 11 ya están.
