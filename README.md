@@ -153,6 +153,8 @@ Mermaid, con los tiempos medidos en producción:
   `SPK-01` (WhatsApp) y `SPK-04` (Azure).
 - **Incrementos pequeños y desplegados**, cada uno con sus pruebas: base de datos, dominio y publicar,
   seguridad, despachador de avisos, push en vivo y observabilidad.
+- **Twelve-Factor y Manifiesto Reactivo:** la [matriz de los doce factores y el análisis de las cuatro propiedades reactivas](docs/04-practicas/TWELVE_FACTOR_Y_REACTIVO.md), cada uno analizado, evaluado y justificado: 8 factores cumplen y 4 son parciales.
+- **Pirámide de pruebas:** [unitarias, de integración y de punta a punta](docs/04-practicas/PIRAMIDE_DE_PRUEBAS.md), con lo que cubre cada nivel y dónde corre.
 - **Clean Code y Clean Architecture:** puertos y adaptadores, casos de uso sin framework, objetos de
   valor e inmutables, y pruebas sin infraestructura para el dominio. Los patrones usados y su
   justificación están en el [diseño detallado](docs/03-arquitectura/DISENO_DETALLADO.md#patrones-de-diseño).

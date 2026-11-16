@@ -16,6 +16,8 @@ pull request cuando queda completo.
 | 6 | [Diseño detallado](03-arquitectura/DISENO_DETALLADO.md) | Los paquetes del back, los diagramas de secuencia y los patrones de diseño |
 | 7 | [Manual de puesta a punto](05-manual-puesta-a-punto/MANUAL_DE_PUESTA_A_PUNTO.md) | Cómo correrlo en local y montarlo desde cero en Azure, con sus servicios externos |
 | 8 | [Evidencias](evidencias/README.md) | Las 12 evidencias obligatorias del enunciado, con dónde está cada una |
+| 9 | [Twelve-Factor y Manifiesto Reactivo](04-practicas/TWELVE_FACTOR_Y_REACTIVO.md) | La matriz de los doce factores y cómo la solución aborda las cuatro propiedades reactivas |
+| 10 | [Pirámide de pruebas](04-practicas/PIRAMIDE_DE_PRUEBAS.md) | Las pruebas unitarias, de integración y de punta a punta, y dónde corren |
 
 ## Convenciones
 
