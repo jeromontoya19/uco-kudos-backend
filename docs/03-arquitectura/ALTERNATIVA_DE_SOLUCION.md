@@ -4,14 +4,14 @@
 
 > §1, §2, §3 y §7 cerradas con las decisiones de las rondas 8 y 9 (`D-45` a `D-52`). §4 y §5 resumen
 > las tecnologías: las ya decididas (ADR aceptados) y las propuestas (`ADR-015` a `ADR-025`, de las que
-> `ADR-015`, `ADR-016`, `ADR-018`, `ADR-019`, `ADR-020`, `ADR-022` y `ADR-023` ya quedaron aceptadas), con los spikes que las confirman. La §6 se llena cuando
+> `ADR-015`, `ADR-016`, `ADR-018` a `ADR-024` ya quedaron aceptadas), con los spikes que las confirman. La §6 se llena cuando
 > los spikes confirmen las propuestas.
 > La ronda 10 (`D-53`, `D-54`) lleva la plataforma a Azure con el crédito de estudiante: cambian el
 > presupuesto, varios SBB y `SPK-04`; la alternativa elegida no cambia. El 13-nov, `SPK-04` movió la
 > API de App Service B1 a Container Apps y la región a `canadacentral` (§4, §5 y §7). El 14-nov,
 > `SPK-04` probó el despliegue desde GitHub por OIDC y la vuelta atrás (§5 y §7). El 15-nov, el
 > primer Kudo con avisos reales aceptó los proveedores de identidad, correo y WhatsApp (`D-60` a
-> `D-62`; §4 y §5).
+> `D-62`; §4 y §5), y el push en vivo y la observabilidad aceptaron el canal en vivo y Application Insights (`D-63`, `D-64`).
 
 Propone **una** alternativa de solución, la compara con las otras, declara los **bloques de
 construcción** (ABB) y la tecnología que los materializa (SBB), y lista los **spikes** que deben
@@ -200,9 +200,9 @@ spike de la §5 o la construcción.
 | `ABB-09` Outbox y despachador | Tabla de outbox en la base y tarea en segundo plano de la API | Aceptada | Broker gestionado, eventos en memoria | `ADR-003` |
 | `ABB-10` Canal de correo | Brevo por API HTTP, con remitente verificado; Mailpit en local | Aceptada (`D-61`) | Resend, SMTP personal, Amazon SES | `ADR-019` |
 | `ABB-11` Canal de WhatsApp | WhatsApp Cloud API de Meta, con la plantilla `kudo_recibido` | Aceptada (`D-62`) | Twilio Sandbox | `ADR-020` |
-| `ABB-12` Canal en vivo | Server-Sent Events (el lado del back ya está construido) | Propuesta | WebSocket, consulta periódica | `ADR-021` |
+| `ABB-12` Canal en vivo | Server-Sent Events, abiertos con `fetch` y el token en la cabecera | Aceptada (`D-63`) | WebSocket, consulta periódica | `ADR-021` |
 | `ABB-13` Auditoría | Tabla de solo inserción en la base | Aceptada (el motor, con `ADR-017`) | — | `ADR-008` |
-| `ABB-14` Observabilidad | OpenTelemetry hacia Application Insights (Azure Monitor); Grafana en local | Propuesta | Grafana Cloud, solo registros de la plataforma, Sentry | `ADR-024` |
+| `ABB-14` Observabilidad | Agente Java de Application Insights (OpenTelemetry) hacia Azure Monitor; Grafana en local | Aceptada (`D-64`) | Grafana Cloud, solo registros de la plataforma, Sentry | `ADR-024` |
 | `ABB-15` Monitor de disponibilidad | UptimeRobot | Aceptada (`D-59`) | Better Stack | `ADR-022` (la meta, en `ADR-014`) |
 | `ABB-16` Copias de seguridad | Tarea diaria en GitHub Actions hacia otro proveedor | Propuesta | Copias del proveedor, copia manual | `ADR-025` (la meta, en `ADR-014`) |
 | `ABB-17` Configuración y secretos | Variables de entorno; secretos en GitHub y en los secretos de Container Apps (Key Vault si sobra tiempo) | Aceptada (`D-56`, `D-59`) | — | `ADR-022`, `ADR-023` |
@@ -239,7 +239,7 @@ el despliegue, y conviene saberlo hoy.
 | `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`). El front se despliega en Static Web Apps como una PWA instalable, y su vuelta atrás también tarda menos de 1 min | El p95 del muro |
 | `SPK-01` | `[:W:]` Cerrado. El `hello_world` llegó al celular desde la página y desde una llamada HTTP a la Cloud API de Meta (v25.0), con el número de prueba. La plantilla `kudo_recibido` quedó aprobada. El 15-nov, con el token permanente, el aviso real de un Kudo llegó en 4,6 s (`D-62`) | — |
 | `SPK-02` | `[:W:]` Respondido por la construcción (15-nov): Brevo le escribe a cualquier destinatario desde un remitente verificado, sin dominio propio, y el aviso real llegó en 4,0 s (`D-61`). No hizo falta un spike aparte | — |
-| `SPK-03` | `[:W:]` A medias: el lado del back está construido y el push omitido queda auditado en producción | Que el front abra el canal y medir el push en ≤ 2 s |
+| `SPK-03` | `[:W:]` Respondido por la construcción (15-nov): el aviso en vivo llegó a la app abierta unos 1,5 s después de publicar, con el token en la cabecera, y el push omitido queda auditado (`D-63`) | — |
 | `SPK-05` | `[:W:]` A medias: Auth0 emite los tokens que la API valida en producción (`D-60`) | Keycloak en local con la misma configuración, y el reparto de verificación de `RF-007` |
 | `SPK-06` | Sin empezar como spike. La base de Azure ya funciona con el mismo código que la de las pruebas (Testcontainers), y en Azure va con TLS verificado | El almacén de archivos con Azurite y la restauración de una copia |
 
