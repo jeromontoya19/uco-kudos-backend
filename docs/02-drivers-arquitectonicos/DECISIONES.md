@@ -1,7 +1,8 @@
 # UCO Kudos — Decisiones del autor
 
 > **v1.9 · 15-nov-2026 · Rondas 1 a 13. La ronda 13 acepta el canal en vivo y la observabilidad, con
-> el push en pantalla y la traza completa de un Kudo en producción.** v1.8 · 15-nov-2026 · Rondas 1 a
+> el push en pantalla y la traza completa de un Kudo en producción, y deja los adjuntos sin construir
+> (`D-65`).** v1.8 · 15-nov-2026 · Rondas 1 a
 > 12. La ronda 12 acepta los proveedores de identidad, correo y WhatsApp con su primer aviso real en
 > producción, y cierra `T-2`. v1.7 · 14-nov-2026 · Rondas 1 a
 > 11, con el resultado de `SPK-04` sobre la ronda 10.
@@ -224,6 +225,7 @@ notificaciones push y la evidencia de observabilidad.
 |---|---|---|---|---|
 | `D-63` | ¿Se acepta Server-Sent Events para el canal en vivo (`ADR-021`)? | **Sí. El front abre el flujo con `fetch` y el token en la cabecera, sin cookie ni token en la URL, y reconecta con espera creciente. El back despacha los avisos apenas se confirma la publicación, sin esperar la vuelta de 5 s. En producción, el aviso flotante apareció en la app abierta del destinatario unos 1,5 s después de publicar** | WebSocket, que sigue como plan B · `EventSource`, que no deja mandar la cabecera con el token · Bajar la vuelta del despachador a 1 s, que consulta la base sin parar y llena la observabilidad de ruido | `ADR-021` pasa a Aceptada; `ABB-12`; `ESC-14`; responde `SPK-03` |
 | `D-64` | ¿Se acepta Application Insights como observabilidad (`ADR-024`)? | **Sí, con el agente Java de Application Insights, hecho sobre OpenTelemetry, que instrumenta la API sin tocar el código y se activa solo si existe la cadena de conexión. En producción ya muestra el mapa de la aplicación y la transacción completa de un Kudo: la petición en 353 ms, y en la misma operación Brevo, Meta y la base. Las métricas propias, los registros en JSON, el límite diario de ingesta y Grafana en local quedan como pendientes, sin reabrir la decisión** | La distribución de OpenTelemetry como dependencia del código, que obligaba a tocar código a horas de congelarlo · Grafana Cloud, que sigue como plan B | `ADR-024` pasa a Aceptada; `ABB-14`; `ESC-12`; evidencia obligatoria de observabilidad |
+| `D-65` | ¿Se construyen los adjuntos antes de la entrega? | **No. El diseño queda completo en `ADR-009`, con almacenamiento, seguridad, recuperación y trazabilidad, y el almacén ya existe en Azure (`ucokudos4632`, contenedor privado `adjuntos`). La construcción del back, el front y sus pruebas toma unas 3 o 4 horas. El autor prefirió respetar el congelamiento del código y dedicar la última noche a lo obligatorio que faltaba: el manual, los diagramas de secuencia, los patrones y las evidencias** | Construirlos la noche antes de la entrega, sin margen para revisarlos | `RF-004` queda diseñado y sin construir; `ADR-009` y `ADR-017` (la parte de archivos) siguen sin evidencia; `ESC-03` sigue pendiente |
 
 ---
 

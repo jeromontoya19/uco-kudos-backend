@@ -13,8 +13,9 @@ pull request cuando queda completo.
 | 3 | [C4](03-arquitectura/C4.md) | Contexto, contenedores, componentes de la API y despliegue |
 | 4 | [Spikes](03-arquitectura/spikes/) | Las pruebas cortas que respaldan las decisiones riesgosas |
 | 5 | [ADR](03-arquitectura/adr/README.md) | Cada decisión, con su contexto, alternativas y consecuencias |
-| 6 | [Diseño detallado](03-arquitectura/DISENO_DETALLADO.md) | Los paquetes del back y cómo se vigilan; las secuencias, cuando estén |
-| 7 | Prácticas · Manual · Evidencias | Se agregan al construir |
+| 6 | [Diseño detallado](03-arquitectura/DISENO_DETALLADO.md) | Los paquetes del back, los diagramas de secuencia y los patrones de diseño |
+| 7 | [Manual de puesta a punto](05-manual-puesta-a-punto/MANUAL_DE_PUESTA_A_PUNTO.md) | Cómo correrlo en local y montarlo desde cero en Azure, con sus servicios externos |
+| 8 | [Evidencias](evidencias/README.md) | Las 12 evidencias obligatorias del enunciado, con dónde está cada una |
 
 ## Convenciones
 
