@@ -73,7 +73,8 @@ atributos de calidad, detrás de la seguridad, que ganó la votación por actor 
 - **Se construye:** publicar un Kudo con adjuntos (`RF-001`, `RF-004`), avisar por los tres canales
   (`RF-002`), auditar todo el proceso (`RF-003`), el muro de Kudos (`RF-005`) y los permisos por rol
   en lo que se construye (`RF-006`). Los usuarios (uno por rol) y las 15 categorías entran como
-  datos semilla.
+  datos semilla. `[:W:]` 15-nov-2026: los adjuntos (`RF-004`) quedaron diseñados en `ADR-009`, pero no
+  se construyeron antes de congelar el código (`D-65`). Hoy el Kudo se publica sin adjuntos.
 - **Se construye solo si sobra tiempo:** réplicas (`RF-008`), reporte y veto (`RF-009`),
   calificaciones y administración de categorías.
 - **Se diseña, pero no se construye:** registro y activación con la cadena de aprobaciones
@@ -98,7 +99,7 @@ existen igual, pero no mueven la arquitectura: la §2.5 dice cuáles quedaron fu
 | `RF-001` | Publicar un Kudo y dejarlo guardado aunque fallen los avisos | Valor de negocio | Se construye | [:V:] |
 | `RF-002` | Avisar al destinatario por correo, WhatsApp y push en tiempo real | Ambos | Se construye | [:V:] |
 | `RF-003` | Auditar toda acción, incluido el resultado de cada aviso | Ambos | Se construye | [:V:] |
-| `RF-004` | Adjuntar archivos con almacenamiento, seguridad, recuperación y trazabilidad | Reto técnico | Se construye | [:V:] |
+| `RF-004` | Adjuntar archivos con almacenamiento, seguridad, recuperación y trazabilidad | Reto técnico | Diseñado en `ADR-009`; la construcción quedó pendiente (`D-65`) | [:W:] |
 | `RF-005` | Consultar el muro de Kudos desde el celular | Ambos | Se construye | [:V:] |
 | `RF-006` | Permitir cada acción solo al rol que el enunciado autoriza | Valor de negocio | Se construye en parte | [:V:] |
 | `RF-007` | Activar una cuenta solo con aprobación, correo y celular verificados | Valor de negocio | Se diseña | [:V:] |

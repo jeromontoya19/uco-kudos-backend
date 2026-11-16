@@ -48,3 +48,9 @@ despliegue.
 
 En GitHub, `main` se protege con pull request obligatorio y sin *force push*; cuando exista la CI, se
 le agrega que los checks pasen. La herramienta de CI/CD se propone en `ADR-023`.
+
+`[!]` **Desvío del 15-nov-2026 (front):** el PR #14 se fusionó de `codigo-desarrollo` a `main`, sin
+pasar por `codigo-testing`. No llevó nada sin probar, porque el mismo cambio ya había entrado a
+`codigo-testing` con el PR #13 y su CI pasó, y las dos ramas tienen los mismos archivos. Desde
+entonces, los PR a `main` vuelven a salir de `codigo-testing` (#17). GitHub no deja fijar de qué rama
+sale un PR, así que esta regla depende de quien lo abre.

@@ -43,3 +43,14 @@ recuperación de los adjuntos depende de las copias de seguridad de `ADR-014`.
 ## Observaciones
 
 **Disparador para el antivirus en producción:** presupuesto para unos 2 GB de RAM.
+
+`[:W:]` **Estado al 15-nov-2026: diseñado, sin construir (`D-65`).** La cuenta de almacenamiento
+`ucokudos4632`, con el contenedor privado `adjuntos`, ya existe en Azure (`SPK-04`, pasos 5 a 8), pero
+la API y el front todavía no suben ni muestran archivos. Lo que falta, en orden:
+1. Un puerto de salida en `kudos` para guardar y leer archivos, con un adaptador de Blob Storage
+   y Azurite en local.
+2. Revisar el tipo real y el tamaño en la API.
+3. Entregar el archivo solo con sesión.
+4. Generar las miniaturas.
+5. Dejar la huella del archivo en la auditoría.
+6. El selector de archivos en el formulario del front.
