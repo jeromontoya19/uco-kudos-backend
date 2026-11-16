@@ -47,3 +47,10 @@ atada a un estándar, no a un proveedor.
 ## Observaciones
 
 El producto de IdP se propone en `ADR-018`.
+
+`[:W:]` 15-nov-2026: el producto es Auth0 (`ADR-018`, aceptada con `D-60`). Así quedó construido:
+- La API valida cada token con las llaves públicas del IdP, su emisor y su audiencia.
+- El token de acceso dura 15 min, y los *refresh tokens* caducan tras 30 días sin uso.
+- El rol no viaja en el token: la API lo lee de su base en cada petición, a partir del `sub`. Por eso
+  quitarle el rol a alguien o desactivarlo tiene efecto en su siguiente petición, antes de que venza
+  el token. Esto cumple la regla de `D-27` con margen.

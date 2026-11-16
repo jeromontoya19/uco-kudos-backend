@@ -1,6 +1,10 @@
 # UCO Kudos — Decisiones del autor
 
-> **v1.7 · 14-nov-2026 · Rondas 1 a 11, con el resultado de `SPK-04` sobre la ronda 10.**
+> **v1.9 · 15-nov-2026 · Rondas 1 a 13. La ronda 13 acepta el canal en vivo y la observabilidad, con
+> el push en pantalla y la traza completa de un Kudo en producción.** v1.8 · 15-nov-2026 · Rondas 1 a
+> 12. La ronda 12 acepta los proveedores de identidad, correo y WhatsApp con su primer aviso real en
+> producción, y cierra `T-2`. v1.7 · 14-nov-2026 · Rondas 1 a
+> 11, con el resultado de `SPK-04` sobre la ronda 10.
 > Lo que el enunciado no dice y hubo que decidir para escribir los drivers arquitectónicos. Cada
 > decisión lleva un identificador `D-nn`, que los demás documentos citan como origen.
 > Manda sobre esto: el enunciado y lo que diga el docente.
@@ -198,6 +202,31 @@ Lo que hubo que decidir al conectar la base de datos, con los resultados de los 
 
 ---
 
+## 12 · Ronda 12 · 15-nov-2026 · Proveedores externos
+
+Lo que hubo que decidir al conectar la seguridad y el despachador de avisos, con el primer Kudo
+publicado desde el front y avisado por correo y WhatsApp en producción.
+
+| ID | Pregunta | Decisión | Se descartó | Qué mueve |
+|---|---|---|---|---|
+| `D-60` | ¿Se acepta Auth0 como proveedor de identidad (`ADR-018`)? | **Sí, Auth0 en producción. El front inicia sesión y la API valida sus tokens (firma, emisor y audiencia), con un token de acceso de 15 min y el registro cerrado. El rol se lee de la base de UCO Kudos en cada petición, a partir del `sub`. Keycloak en local y el reparto de verificación de `RF-007` se resuelven al construir el registro, sin reabrir la decisión** | Zitadel Cloud, que queda como plan B y no se llegó a probar · Dejarla en Propuesta hasta correr `SPK-05` completo | `ADR-018` pasa a Aceptada; `ABB-02`; cierra `T-2`; `ESC-02` |
+| `D-61` | ¿Se acepta Brevo como proveedor de correo (`ADR-019`)? | **Sí. Envía por su API HTTP, desde un remitente verificado y sin dominio propio, a cualquier destinatario. El primer aviso real llegó a la bandeja de entrada 4,0 s después de publicar el Kudo. Eso responde la pregunta de `SPK-02`** | Resend, que sin dominio propio solo le escribe a la dirección de la cuenta · Azure Communication Services Email, que sigue como plan B | `ADR-019` pasa a Aceptada; `ABB-10`; `ESC-05` |
+| `D-62` | ¿Se acepta la WhatsApp Cloud API de Meta (`ADR-020`)? | **Sí. Usa el número de prueba, la plantilla aprobada `kudo_recibido` y un token permanente de un usuario del sistema. El primer aviso real llegó al celular verificado 4,6 s después de publicar el Kudo. Como la plantilla está aprobada, ya no hace falta abrir la ventana de 24 horas antes de la demo** | Twilio WhatsApp Sandbox, que sigue como plan B | `ADR-020` pasa a Aceptada; `ABB-11`; `ESC-05`; cierra la parte 4 de `SPK-01` |
+
+---
+
+## 13 · Ronda 13 · 15-nov-2026 · Push en vivo y observabilidad
+
+Lo que hubo que decidir para cerrar los dos obligatorios que faltaban antes de congelar el código: las
+notificaciones push y la evidencia de observabilidad.
+
+| ID | Pregunta | Decisión | Se descartó | Qué mueve |
+|---|---|---|---|---|
+| `D-63` | ¿Se acepta Server-Sent Events para el canal en vivo (`ADR-021`)? | **Sí. El front abre el flujo con `fetch` y el token en la cabecera, sin cookie ni token en la URL, y reconecta con espera creciente. El back despacha los avisos apenas se confirma la publicación, sin esperar la vuelta de 5 s. En producción, el aviso flotante apareció en la app abierta del destinatario unos 1,5 s después de publicar** | WebSocket, que sigue como plan B · `EventSource`, que no deja mandar la cabecera con el token · Bajar la vuelta del despachador a 1 s, que consulta la base sin parar y llena la observabilidad de ruido | `ADR-021` pasa a Aceptada; `ABB-12`; `ESC-14`; responde `SPK-03` |
+| `D-64` | ¿Se acepta Application Insights como observabilidad (`ADR-024`)? | **Sí, con el agente Java de Application Insights, hecho sobre OpenTelemetry, que instrumenta la API sin tocar el código y se activa solo si existe la cadena de conexión. En producción ya muestra el mapa de la aplicación y la transacción completa de un Kudo: la petición en 353 ms, y en la misma operación Brevo, Meta y la base. Las métricas propias, los registros en JSON, el límite diario de ingesta y Grafana en local quedan como pendientes, sin reabrir la decisión** | La distribución de OpenTelemetry como dependencia del código, que obligaba a tocar código a horas de congelarlo · Grafana Cloud, que sigue como plan B | `ADR-024` pasa a Aceptada; `ABB-14`; `ESC-12`; evidencia obligatoria de observabilidad |
+
+---
+
 ## Tensiones entre decisiones
 
 Choques que las decisiones dejan abiertos a propósito. No se resuelven aquí, sino en la decisión
@@ -207,7 +236,7 @@ queda documentada.
 | ID | Choque | Por qué choca | Dónde se resuelve | Estado |
 |---|---|---|---|---|
 | `T-1` | `D-05` (800 simultáneos) contra `D-07` (0 USD) | Es poco probable que una instancia de capa gratuita sostenga 800 usuarios a la vez, y no hay cómo medirlo sin pagar | `D-15`. El escenario de rendimiento separa lo que permite la arquitectura de lo que se mide en el despliegue gratuito | **Reducida** por `D-15` |
-| `T-2` | `D-09` (IdP) contra `D-07` (0 USD) y `CN-01` (plazo) | Un IdP autohospedado consume una memoria que las capas gratuitas casi no dan; uno gestionado tiene capa gratuita, pero es un servicio externo más | Un spike de identidad y su ADR. `D-19` la inclina hacia un IdP gestionado | **Abierta** |
+| `T-2` | `D-09` (IdP) contra `D-07` (0 USD) y `CN-01` (plazo) | Un IdP autohospedado consume una memoria que las capas gratuitas casi no dan; uno gestionado tiene capa gratuita, pero es un servicio externo más | Un spike de identidad y su ADR. `D-19` la inclina hacia un IdP gestionado. `D-60` elige Auth0, gestionado y con capa gratuita: no gasta memoria de la instancia ni crédito | **Cerrada** por `D-60` |
 | `T-3` | `D-04` (canal en vivo) contra `D-05` (800 simultáneos) | Puede haber hasta 800 conexiones abiertas. Con más de una instancia de la API, el push necesita un relevo compartido entre instancias | `D-15`: con una sola instancia no hace falta relevo; queda documentado como evolución en el ADR de push | **Reducida** por `D-15` |
 | `T-4` | `D-16` (borrar datos personales) contra `D-08` (la auditoría nunca se borra) | La ley permite pedir que se borren los datos personales, y la auditoría no se puede modificar | `D-22` | **Cerrada** por `D-22` |
 | `T-5` | `D-19` (servicios gestionados) contra `D-20` (todo en local con un comando) | En local no existen los servicios gestionados, así que hay que reemplazarlos por contenedores. Solo hay paridad si producción y local hablan el mismo protocolo (SQL, almacenamiento compatible con S3, OIDC) | Los ADR de base de datos, archivos e identidad | **Abierta** |
