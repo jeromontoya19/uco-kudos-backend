@@ -80,7 +80,23 @@ de publicarse y por WhatsApp **4,6 s** después. El push quedó omitido porque e
 la aplicación abierta. Evidencias en `docs/evidencias/notificaciones/`: `avisos-auditoria.png`,
 `avisos-correo.png` y `avisos-whatsapp.png`.
 
+`[:W:]` **Despacho inmediato (15-nov-2026, back `10ebe87`).** Con una vuelta cada 5 s, el push podía
+tardar hasta 5 s, y `ESC-14` pide ≤ 2 s. Ahora:
+- Al dejar los avisos pendientes, el módulo anuncia un evento, `AvisosProgramados`.
+- Apenas se confirma la transacción de la publicación, el despachador despacha en otro hilo, así que
+  la respuesta sigue sin esperar a los canales.
+- La vuelta cada 5 s queda para los reintentos.
+- Un candado deja correr una sola tanda a la vez, para que la inmediata y la periódica nunca envíen el
+  mismo aviso dos veces.
+- Lo prueba `DespachoInmediatoIT`, con la vuelta periódica puesta en 1 h.
+
+En producción, la traza de Application Insights muestra la petición respondida en 353 ms y, en la
+misma operación, el correo enviado unos 1,5 s después de publicar y el WhatsApp unos 2,7 s después
+(`docs/evidencias/observabilidad/observabilidad-transaccion.webp`, `ADR-024`).
+
 `[!]` **Pendiente:**
 - Los adaptadores todavía no mandan el identificador del aviso para evitar duplicados, así que la
   entrega sigue siendo al menos una vez.
+- Los canales de un Kudo salen uno tras otro. Despachar primero el push dejaría el aviso en pantalla
+  sin esperar la llamada a Brevo (`ADR-021`).
 - Las métricas por canal (punto 5) esperan `ADR-024`.
