@@ -1,11 +1,11 @@
 # UCO Kudos — Alternativa de solución, bloques de construcción y spikes
 
-**v0.7 · 15-nov-2026 · Jerónimo Montoya Londoño**
+**v0.8 · 15-nov-2026 · Jerónimo Montoya Londoño**
 
 > §1, §2, §3 y §7 cerradas con las decisiones de las rondas 8 y 9 (`D-45` a `D-52`). §4 y §5 resumen
 > las tecnologías: las ya decididas (ADR aceptados) y las propuestas (`ADR-015` a `ADR-025`, de las que
 > `ADR-015`, `ADR-016`, `ADR-018` a `ADR-024` ya quedaron aceptadas), con los spikes que las confirman. La §6 se llena cuando
-> los spikes confirmen las propuestas.
+> los spikes confirmen las propuestas. `[:W:]` 15-nov: la §6 ya está llena, con el veredicto de los 16 escenarios.
 > La ronda 10 (`D-53`, `D-54`) lleva la plataforma a Azure con el crédito de estudiante: cambian el
 > presupuesto, varios SBB y `SPK-04`; la alternativa elegida no cambia. El 13-nov, `SPK-04` movió la
 > API de App Service B1 a Container Apps y la región a `canadacentral` (§4, §5 y §7). El 14-nov,
@@ -245,14 +245,42 @@ el despliegue, y conviene saberlo hoy.
 
 ---
 
-## 6 · Cobertura de escenarios (se llena después de los ADR)
+## 6 · Cobertura de escenarios
 
-**Veredictos:** CUMPLE (hay un mecanismo y la medida es alcanzable) · PARCIAL (falta medir algo) ·
-NO CUMPLE (se dice por qué y cuándo se reabre) · EN CONFLICTO (choca con otra decisión).
+**Veredictos:**
+- **CUMPLE:** hay un mecanismo construido y la medida se comprobó.
+- **PARCIAL:** el mecanismo está, pero falta construir o medir algo.
+- **NO CUMPLE:** se dice por qué y cuándo se reabre.
+- **EN CONFLICTO:** choca con otra decisión.
+
+Estado al 15-nov-2026, con la API `10ebe87` y el front `17246be` en producción. Cada evidencia está en
+la §9 de los drivers y en el [índice de evidencias](../evidencias/README.md).
 
 | ESC | Atributo | Medida comprometida | Mecanismo (ABB · ADR) | Veredicto | Por qué |
 |---|---|---|---|---|---|
-| `ESC-01` | Seguridad | 100 % de las acciones no autorizadas rechazadas y auditadas | | | |
+| `ESC-01` | Seguridad | 100 % de las acciones no autorizadas rechazadas y auditadas | `ABB-03` · `ADR-007`, `ADR-008`: la API lee el rol de su base en cada petición, y cada endpoint puede exigir un rol | PARCIAL | Todo `/api/**` exige una sesión con persona activa: sin token responde 401, y con una cuenta sin persona, 403 (`ApiDeKudosIT`). Pero las acciones que solo puede hacer un rol (vetar, administrar categorías) todavía no están construidas, y un intento rechazado aún no queda en la auditoría |
+| `ESC-02` | Seguridad | Acceso perdido en ≤ 15 min; 0 renovaciones después de revocar | `ABB-02`, `ABB-03` · `ADR-007`, `ADR-018` | PARCIAL | Con el rol leído en cada petición, a quien desactivan pierde el acceso en su siguiente petición, sin esperar los 15 min del token. Falta impedir que su sesión de Auth0 se renueve, y eso llega con la administración de personas |
+| `ESC-03` | Seguridad | 100 % de los archivos no permitidos rechazados | `ABB-07`, `ABB-08` · `ADR-009` | NO CUMPLE | Los adjuntos están diseñados y no construidos (`D-65`). Se reabre cuando se construyan: revisar el tipo real y el tamaño, y ClamAV en local |
+| `ESC-04` | Confiabilidad | 0 Kudos perdidos; respuesta en ≤ 2 s | `ABB-09` · `ADR-001`, `ADR-003` | CUMPLE | Una sola transacción para el Kudo, sus avisos y su auditoría (`PublicacionAtomicaIT`). En producción respondió en **353 ms**, sin esperar a los canales |
+| `ESC-05` | Confiabilidad | Correo y WhatsApp en ≤ 1 min; 5 intentos en 30 min; estado final | `ABB-09`, `ABB-10`, `ABB-11` · `ADR-003`, `ADR-019`, `ADR-020` | CUMPLE | Correo en 4,0 s y WhatsApp en 4,6 s en la primera medición; en la segunda, ya con el despacho inmediato, 1,5 s y 2,7 s. Los reintentos y el estado final los prueban `AvisoTest` y `DespachoDeAvisosIT` |
+| `ESC-06` | Confiabilidad | ≤ 24 h perdidas; recuperar en ≤ 4 h; restauración probada | `ABB-16` · `ADR-014`, `ADR-017`, `ADR-025` | PARCIAL | El servidor flexible de PostgreSQL trae copias automáticas con restauración a un punto en el tiempo. Pero no existe la copia diaria fuera del proveedor de `ADR-025` (sigue en Propuesta), y la restauración no se ha probado. Se reabre con `SPK-06` |
+| `ESC-07` | Disponibilidad | 99 % en la semana de evaluación | `ABB-15` · `ADR-011`, `ADR-014`, `ADR-022` | PARCIAL | La réplica está siempre encendida y UptimeRobot revisa la salud cada 5 min. El 99 % solo se puede medir durante la semana de evaluación |
+| `ESC-08` | Disponibilidad | 100 % de las publicaciones aceptadas con un proveedor caído | `ABB-09` · `ADR-003` | PARCIAL | Las pruebas automatizadas simulan un proveedor que falla: el Kudo se publica, el aviso se reintenta y el fallo queda auditado. Falta probarlo con un proveedor caído de verdad en producción |
+| `ESC-09` | Cumplimiento | 100 % de las acciones registradas; 0 registros cambiados; historia de un Kudo en ≤ 2 s | `ABB-13` · `ADR-008` | PARCIAL | La base rechaza cambiar o borrar la auditoría con disparadores (`PublicarKudoIT`), y la publicación y cada aviso quedan registrados, con un índice por recurso. Las acciones que no están construidas, como el veto o el registro, todavía no auditan nada, y la consulta de la historia no se midió |
+| `ESC-10` | Cumplimiento | Solicitud de borrado en ≤ 15 días hábiles; 0 datos personales en la auditoría | `ABB-13` · `ADR-008` | PARCIAL | La auditoría solo guarda identificadores, nunca nombres, correos ni celulares (migración `V5`). El trámite de borrado de datos personales no está construido |
+| `ESC-11` | Cumplimiento | 0 respuestas con el celular de otro usuario | `ABB-03` · `ADR-008` | CUMPLE | Ninguna consulta construida devuelve correo ni celular: `/api/personas` (lo prueba `ApiDeKudosIT`), el muro y `/api/yo` solo llevan nombres e identificadores. El celular solo lo lee el módulo de avisos, por un puerto propio (`ConsultarContactos`) |
+| `ESC-12` | Capacidad para ser Soportado | Causa en ≤ 5 min; un identificador que una registros, trazas y auditoría | `ABB-14` · `ADR-024` | PARCIAL | En Application Insights, un solo identificador de operación une la publicación con cada proveedor y su código de respuesta, y la auditoría se consulta por el Kudo. Falta un identificador común entre la traza y la auditoría, y las métricas por canal |
+| `ESC-13` | Rendimiento | p95 ≤ 1 s con 50 simultáneos; Kudo nuevo visible en ≤ 5 s | `ABB-06` · `ADR-004`, `ADR-011`, `ADR-022` | PARCIAL | El muro se pagina, con un máximo de 50, y se lee con un índice por fecha. Un Kudo nuevo se ve de inmediato porque todavía no hay caché: la de `ADR-004` no se construyó. Falta medir el p95 (`SPK-04`, paso 13) |
+| `ESC-14` | Rendimiento | Push en ≤ 2 s; 100 % de los omitidos auditados | `ABB-12` · `ADR-003`, `ADR-021` | CUMPLE | Unos 1,5 s en producción, con el aviso flotante en el celular, y el push omitido queda en la auditoría. `[!]` Hay poco margen, porque el push sale después del correo |
+| `ESC-15` | Desplegabilidad | ≤ 15 min del merge a producción; vuelta atrás en ≤ 10 min | `ABB-19`, `ABB-20` · `ADR-013`, `ADR-022`, `ADR-023` | CUMPLE | El CD despliega en menos de 2 min sin pasos manuales; la vuelta atrás tardó 47 s en el back y 38 s en el front |
+| `ESC-16` | Experiencia de usuario | Una sola pantalla; ≤ 60 s de principio a fin | `ABB-01` · `ADR-006`, `ADR-016` | PARCIAL | El panel flotante publica desde el mismo muro: destinatario, categoría y mensaje en una sola pantalla del celular. Falta cronometrar a un usuario de principio a fin |
+
+**Resumen:** 5 CUMPLE, 10 PARCIAL y 1 NO CUMPLE; ninguno EN CONFLICTO.
+- **Cumplen** los escenarios del flujo obligatorio (publicar y avisar por los tres canales), la
+  desplegabilidad y la protección de los datos de contacto.
+- **Los PARCIAL** tienen el mecanismo construido, pero dependen de algo que no se construyó (veto,
+  administración de personas, copias fuera del proveedor, caché del muro) o de una medición pendiente.
+- **El NO CUMPLE** son los adjuntos (`D-65`).
 
 ---
 
