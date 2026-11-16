@@ -236,7 +236,7 @@ el despliegue, y conviene saberlo hoy.
 
 | Spike | Estado | Qué falta |
 |---|---|---|
-| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado, y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`). El front se despliega en Static Web Apps como una PWA instalable, y su vuelta atrás también tarda menos de 1 min | El p95 del muro |
+| `SPK-04` | Partes 1 a 3 terminadas: suscripción activa, presupuesto creado (el 15-nov), y la API (Container Apps), la base y los archivos en `canadacentral`, con el front en `westus2`. El CD despliega el back real desde GitHub por OIDC, conectado a PostgreSQL, y la vuelta atrás tarda menos de 1 min (`ESC-15`). El front se despliega en Static Web Apps como una PWA instalable, y su vuelta atrás también tarda menos de 1 min | El p95 del muro |
 | `SPK-01` | `[:W:]` Cerrado. El `hello_world` llegó al celular desde la página y desde una llamada HTTP a la Cloud API de Meta (v25.0), con el número de prueba. La plantilla `kudo_recibido` quedó aprobada. El 15-nov, con el token permanente, el aviso real de un Kudo llegó en 4,6 s (`D-62`) | — |
 | `SPK-02` | `[:W:]` Respondido por la construcción (15-nov): Brevo le escribe a cualquier destinatario desde un remitente verificado, sin dominio propio, y el aviso real llegó en 4,0 s (`D-61`). No hizo falta un spike aparte | — |
 | `SPK-03` | `[:W:]` Respondido por la construcción (15-nov): el aviso en vivo llegó a la app abierta unos 1,5 s después de publicar, con el token en la cabecera, y el push omitido queda auditado (`D-63`) | — |

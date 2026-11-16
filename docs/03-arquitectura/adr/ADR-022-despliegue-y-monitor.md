@@ -150,7 +150,7 @@ la base y los archivos pasó a `canadacentral`.
 | `ucokudos4632` | Cuenta de almacenamiento con el contenedor privado `adjuntos` | `canadacentral` | Creado y vacío |
 | `workspace-rgucokudos…` | Log Analytics, que creó el entorno de Container Apps | `canadacentral` | Recibe los registros del entorno |
 | `ucokudos-web` | Static Web Apps, plan Free | `westus2` | Sirve la PWA desplegada por el CD del front (versión `d02d788`) en https://happy-bush-0fa58021e.4.azurestaticapps.net; se instala en el celular |
-| Presupuesto | *Cost Management* | — | Creado, con avisos al correo personal |
+| Presupuesto | *Cost Management* | — | `presupuesto-uco-kudos`, 30 USD al mes, con avisos al 50, 80 y 100 %. `[:W:]` Se creó el 15-nov: el del 13-nov no había quedado guardado (`SPK-04`, paso 3). Al 15-nov el gasto va en 1,14 USD |
 
 **Lo que ya probó `SPK-04` (14-nov-2026):**
 - **El back:** el CD lo despliega en Container Apps por OIDC, con la identidad
