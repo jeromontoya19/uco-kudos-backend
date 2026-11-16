@@ -1,8 +1,5 @@
 # UCO Kudos
 
-> **Borrador:** completado con IA a partir de la documentación de `docs/`. Revísalo y borra esta nota
-> cuando el documento sea tuyo.
-
 ## Plataforma institucional de reconocimientos · Proyecto integrador de Ingeniería del Software II
 
 > **Jerónimo Montoya Londoño**

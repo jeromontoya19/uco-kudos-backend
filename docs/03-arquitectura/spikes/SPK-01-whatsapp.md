@@ -1,7 +1,5 @@
 # `SPK-01` · WhatsApp: ¿llega el aviso desde una llamada HTTP a la API de Meta?
 
-> **Borrador:** preparado con IA a partir de `ADR-020`. Los pasos son una guía; los resultados los llena el autor al correr el spike. Borra esta nota cuando el documento sea tuyo.
-
 > **Fecha:** 13-nov-2026 · **Límite de tiempo:** 1 h · **Estado:** CERRADO el 15-nov-2026. Se
 > respondió el 13-nov. Después quedó aprobada la plantilla, y el 15-nov se hizo la parte 4 (token
 > permanente), con el primer aviso real en producción

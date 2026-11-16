@@ -1,8 +1,5 @@
 # UCO Kudos — Diseño detallado del back
 
-> **Borrador:** preparado con IA a partir del código del back. Revísalo y borra esta nota cuando el
-> documento sea tuyo.
-
 **v0.2 · 15-nov-2026 · Jerónimo Montoya Londoño**
 
 > Cómo está organizado por dentro el código de la API. Complementa el nivel 3 del

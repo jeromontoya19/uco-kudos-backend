@@ -1,8 +1,5 @@
 # UCO Kudos — Manual de puesta a punto
 
-> **Borrador:** preparado con IA a partir de lo que se hizo en `SPK-01`, `SPK-04` y la construcción.
-> Revísalo y borra esta nota cuando el documento sea tuyo.
-
 **v0.1 · 15-nov-2026 · Jerónimo Montoya Londoño**
 
 > Cómo correr UCO Kudos en un computador y cómo montarlo desde cero en Azure, con sus servicios

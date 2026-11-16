@@ -1,7 +1,5 @@
 # `SPK-04` · Despliegue: ¿se puede montar UCO Kudos en Azure for Students?
 
-> **Borrador:** preparado con IA a partir de `ADR-022`. Los pasos son una guía; los resultados los llena el autor al correr el spike. Borra esta nota cuando el documento sea tuyo.
-
 > **Fecha:** 12-nov-2026 · **Límite de tiempo:** 3 h · **Estado:** ABIERTO. Las partes 1 y 2 y el
 > paso 9 quedaron terminados el 13-nov-2026, y los pasos 10 y 11 (despliegue desde GitHub y vuelta
 > atrás, del back y del front), el 14-nov-2026, junto con la medida de memoria y arranque en Azure (paso 12) y el monitor
