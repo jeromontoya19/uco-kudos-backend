@@ -10,6 +10,30 @@
 **URL pública:** [happy-bush-0fa58021e.4.azurestaticapps.net](https://happy-bush-0fa58021e.4.azurestaticapps.net) · **API:** [ucokudos-api](https://ucokudos-api.grayriver-ab7e245b.canadacentral.azurecontainerapps.io/actuator/health) · **Disponibilidad:** [página de estado](https://stats.uptimerobot.com/Kg3YSa2rj9) · **Front-End:** [uco-kudos-frontend](https://github.com/jeromontoya19/uco-kudos-frontend) · **Documentación:** [docs/](docs/README.md) · **Manual:** [puesta a punto](docs/05-manual-puesta-a-punto/MANUAL_DE_PUESTA_A_PUNTO.md) · **Evidencias:** [índice](docs/evidencias/README.md)
 
 ---
+### Cómo probarlo
+
+1. **Abra la [URL pública](https://happy-bush-0fa58021e.4.azurestaticapps.net)** en el celular o en el
+   navegador. Es una PWA: también se puede instalar como aplicación.
+2. **Inicie sesión con la cuenta de prueba que el autor entrega por aparte.** El registro está
+   cerrado: las cuentas las crea el autor en Auth0 y las vincula a una persona de UCO Kudos
+   (`ADR-018`). Las credenciales nunca están en el repositorio.
+3. **Pulse «Dar un Kudo»,** elija a «Estudiante de prueba», una categoría y un mensaje, y publique. El
+   Kudo aparece primero en el muro.
+4. **Lo que pasa después, en unos segundos:**
+   - Al estudiante de prueba le llegan el correo y el WhatsApp.
+   - Si tiene la aplicación abierta, también ve el aviso flotante.
+   - Cada paso queda en la auditoría, y la transacción completa se ve en Application Insights. El
+     autor lo puede mostrar en la sustentación.
+5. **Sin iniciar sesión** se pueden comprobar:
+   - La [salud de la API](https://ucokudos-api.grayriver-ab7e245b.canadacentral.azurecontainerapps.io/actuator/health).
+   - La [versión desplegada](https://ucokudos-api.grayriver-ab7e245b.canadacentral.azurecontainerapps.io/actuator/info).
+   - La [página de estado](https://stats.uptimerobot.com/Kg3YSa2rj9).
+   - Que la API rechace cualquier petición sin token, con 401: por ejemplo,
+     [`/api/kudos`](https://ucokudos-api.grayriver-ab7e245b.canadacentral.azurecontainerapps.io/api/kudos).
+
+Para montarlo desde cero, está el [manual de puesta a punto](docs/05-manual-puesta-a-punto/MANUAL_DE_PUESTA_A_PUNTO.md).
+
+---
 ### UCO Kudos
 
 Una persona de la comunidad académica de la Universidad Católica de Oriente le reconoce a otra un
